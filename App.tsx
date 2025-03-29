@@ -37,8 +37,6 @@ export default function App() {
         <Stack.Screen name="PvPSettings" component={PvPSettingsScreen} />
         <Stack.Screen name="PvAiSettings" component={PvAiSettingsScreen} />
         <Stack.Screen name="HowToPlay" component={HowToPlayScreen} />
-
-
         {/* Future Screens: PvP, PvAI, etc */}
         {/* <Stack.Screen name="PvP" component={PvPScreen} /> */}
         {/* <Stack.Screen name="PvAI" component={PvAIScreen} /> */}
