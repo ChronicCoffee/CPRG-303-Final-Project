@@ -114,7 +114,7 @@ export default function SettingsScreen(): JSX.Element {
         {/* Settings Card */}
         <View className="w-full max-w-[380px] bg-[#82cfff] rounded-2xl border-4 border-[#f4d5a6] p-6" style={{ height: height * 0.5 }}>
           <View className="flex-1 justify-evenly items-center">
-            <Text style={{ fontFamily: 'Bytebounce', fontSize: 35, color: '#fff', textShadowColor: '#00000066', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 2 }}>
+            <Text style={{ fontFamily: 'Bytebounce', fontSize: 50, color: '#fff', textShadowColor: '#00000066', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 2 }}>
               Settings
             </Text>
 
