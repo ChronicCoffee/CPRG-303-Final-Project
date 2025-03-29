@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -14,9 +14,10 @@ const iconSources = [
 
 export default function PvAiSettingsScreen(): JSX.Element {
   const navigation = useNavigation();
+  const [aiDifficulty, setAiDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Easy');
 
   const pixelArtImages = useMemo(() => {
-    const items: { id: number; top: number; left: number; size: number; rotate: number; source: any; }[] = [];
+    const items: { id: number; top: number; left: number; size: number; rotate: number; source: any }[] = [];
     const attempts = 100;
 
     const isOverlapping = (a: { id?: number; top: any; left: any; size: any; rotate?: number; source?: any; }, b: { id?: number; top: any; left: any; size: any; rotate?: number; source?: any; }) => {
@@ -50,6 +51,13 @@ export default function PvAiSettingsScreen(): JSX.Element {
 
     return items;
   }, []);
+
+  const difficulties = ['Easy', 'Medium', 'Hard'] as const;
+  const colorMap = {
+    Easy: '#22c55e',
+    Medium: '#facc15',
+    Hard: '#ef4444',
+  };
 
   return (
     <View className="flex-1">
@@ -119,7 +127,6 @@ export default function PvAiSettingsScreen(): JSX.Element {
           style={{ height: height * 0.5 }}
         >
           <View className="flex-1 justify-between items-center">
-
             <Text style={{
               fontFamily: 'Bytebounce',
               fontSize: 35,
@@ -132,15 +139,52 @@ export default function PvAiSettingsScreen(): JSX.Element {
               Mode Settings
             </Text>
 
-            {/* AI Difficulty */}
-            <TouchableOpacity className="bg-[#bde6ff] rounded-xl p-4 w-full shadow flex-row items-center justify-center space-x-2">
-              <Brain size={20} color="black" style={{ marginRight: 8 }} />
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 30, color: '#000' }}>AI Difficulty</Text>
-            </TouchableOpacity>
+            {/* AI Difficulty Segment */}
+            <View className="bg-[#bde6ff] rounded-xl p-4 w-full shadow items-center">
+              <View className="flex-row justify-center items-center space-x-2 mb-2">
+                <Brain size={20} color="black" style={{ marginRight: 6 }} />
+                <Text style={{
+                  fontFamily: 'Bytebounce',
+                  fontSize: 35,
+                  color: '#000',
+                }}>
+                  AI Difficulty
+                </Text>
+              </View>
+
+              <View className="flex-row justify-center items-center space-x-4">
+                {difficulties.map(level => {
+                  const isSelected = aiDifficulty === level;
+                  const bgColor = isSelected ? colorMap[level] : '#ffffff';
+                  const textColor = isSelected ? '#ffffff' : colorMap[level];
+
+                  return (
+                    <TouchableOpacity
+                      key={level}
+                      onPress={() => setAiDifficulty(level)}
+                      className="px-4 py-2 rounded-full"
+                      style={{
+                        borderWidth: 2,
+                        borderColor: colorMap[level],
+                        backgroundColor: bgColor,
+                      }}
+                    >
+                      <Text style={{
+                        fontFamily: 'Bytebounce',
+                        fontSize: 25,
+                        color: textColor,
+                      }}>
+                        {level}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
 
             {/* Best of 3 */}
             <TouchableOpacity className="bg-[#bde6ff] rounded-xl p-4 w-full shadow flex-row items-center justify-center space-x-2">
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 30, color: '#000' }}>📊 Best of 3</Text>
+              <Text style={{ fontFamily: 'Bytebounce', fontSize: 35, color: '#000' }}>📊 Best of 3</Text>
             </TouchableOpacity>
 
             {/* Back */}
