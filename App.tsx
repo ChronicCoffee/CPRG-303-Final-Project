@@ -1,11 +1,10 @@
-import React from 'react';
 import { useFonts } from 'expo-font';
 import { View, ActivityIndicator } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    'ByteBounce': require('./assets/fonts/ByteBounce.ttf'),
+    Bytebounce: require('./assets/fonts/ByteBounce.ttf'),
   });
 
   if (!fontsLoaded) {

@@ -6,12 +6,11 @@ import { Settings } from 'lucide-react-native';
 const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen(): JSX.Element {
-  
   const pixelArtImages = useMemo(() => {
-    const items = [];
+    const items: { id: number; top: number; left: number; size: number; }[] = [];
     const attempts = 100;
 
-    const isOverlapping = (a, b) => {
+    const isOverlapping = (a: { id?: number; top: any; left: any; size: any; }, b: { id?: number; top: any; left: any; size: any; }) => {
       return !(
         a.left + a.size < b.left ||
         a.left > b.left + b.size ||
@@ -24,7 +23,7 @@ export default function HomeScreen(): JSX.Element {
       let tries = 0;
       while (tries < attempts) {
         const size = 32 + Math.random() * 24;
-        const top = Math.random() * (height - size - 100); 
+        const top = Math.random() * (height - size - 100);
         const left = Math.random() * (width - size);
 
         const newItem = { id: i, top, left, size };
@@ -67,11 +66,11 @@ export default function HomeScreen(): JSX.Element {
 
       {/* Main Content */}
       <View className="flex-1 items-center justify-center px-6">
-        <View className="items-center mb-24"> 
+      <View className="items-center" style={{ marginBottom: 200 }}>
           <Text
             style={{
-              fontFamily: 'ByteBound',
-              fontSize: 64,
+              fontFamily: 'Bytebounce',
+              fontSize: 100,
               textShadowColor: '#00000066',
               textShadowOffset: { width: 2, height: 2 },
               textShadowRadius: 2,
@@ -83,8 +82,8 @@ export default function HomeScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'ByteBound',
-              fontSize: 40,
+              fontFamily: 'Bytebounce',
+              fontSize: 55,
               textShadowColor: '#00000066',
               textShadowOffset: { width: 2, height: 2 },
               textShadowRadius: 2,
@@ -96,8 +95,8 @@ export default function HomeScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'ByteBound',
-              fontSize: 64,
+              fontFamily: 'Bytebounce',
+              fontSize: 100,
               textShadowColor: '#00000066',
               textShadowOffset: { width: 2, height: 2 },
               textShadowRadius: 2,
@@ -116,8 +115,8 @@ export default function HomeScreen(): JSX.Element {
         >
           <Text
             style={{
-              fontFamily: 'ByteBound',
-              fontSize: 24,
+              fontFamily: 'Bytebounce',
+              fontSize: 38,
               color: '#000',
             }}
           >
