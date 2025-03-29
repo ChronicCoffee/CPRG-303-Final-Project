@@ -132,7 +132,10 @@ export default function SettingsScreen(): JSX.Element {
             {/* How to Play */}
             <View className="items-center">
               <Text style={{ fontFamily: 'Bytebounce', fontSize: 22, marginBottom: 6 }}>How to Play</Text>
-              <TouchableOpacity className="bg-[#c6e8ff] border-4 border-[#f4d5a6] rounded-full px-8 py-2 shadow">
+              <TouchableOpacity 
+                className="bg-[#c6e8ff] border-4 border-[#f4d5a6] rounded-full px-8 py-2 shadow"
+                onPress={() => navigation.navigate('HowToPlay')}
+              >
                 <HelpCircle size={24} color="black" />
               </TouchableOpacity>
             </View>

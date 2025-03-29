@@ -8,6 +8,7 @@ import GameModeScreen from './src/screens/GameModeScreen';
 import SettingsScreen from './src/screens/SettingsScreen'; 
 import PvPSettingsScreen from './src/screens/PvPSettingsScreen'; 
 import PvAiSettingsScreen from './src/screens/PvAiSettingsScreen';
+import HowToPlayScreen from './src/screens/HowtoPlayScreen';
 
 
 
@@ -35,6 +36,8 @@ export default function App() {
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="PvPSettings" component={PvPSettingsScreen} />
         <Stack.Screen name="PvAiSettings" component={PvAiSettingsScreen} />
+        <Stack.Screen name="HowToPlay" component={HowToPlayScreen} />
+
 
         {/* Future Screens: PvP, PvAI, etc */}
         {/* <Stack.Screen name="PvP" component={PvPScreen} /> */}
