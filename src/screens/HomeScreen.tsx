@@ -6,7 +6,7 @@ import { Settings } from 'lucide-react-native';
 const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen(): JSX.Element {
-  // Avoid overlapping pixel icons
+  
   const pixelArtImages = useMemo(() => {
     const items = [];
     const attempts = 100;
@@ -24,7 +24,7 @@ export default function HomeScreen(): JSX.Element {
       let tries = 0;
       while (tries < attempts) {
         const size = 32 + Math.random() * 24;
-        const top = Math.random() * (height - size - 100); // avoid bottom buttons
+        const top = Math.random() * (height - size - 100); 
         const left = Math.random() * (width - size);
 
         const newItem = { id: i, top, left, size };
@@ -67,7 +67,7 @@ export default function HomeScreen(): JSX.Element {
 
       {/* Main Content */}
       <View className="flex-1 items-center justify-center px-6">
-        <View className="items-center mb-24"> {/* Increased margin below title */}
+        <View className="items-center mb-24"> 
           <Text
             style={{
               fontFamily: 'ByteBound',
