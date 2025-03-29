@@ -132,7 +132,7 @@ export default function GameModeScreen(): JSX.Element {
             {/* Player vs Player */}
             <TouchableOpacity
               className="bg-[#bde6ff] rounded-xl p-6 w-full shadow"
-              onPress={() => navigation.navigate('PvPScreen')}
+              onPress={() => navigation.navigate('PvPSettings')}
             >
               <Text style={{ fontFamily: 'Bytebounce', fontSize: 40, color: '#2563eb', textAlign: 'center' }}>Player</Text>
               <Text style={{ fontFamily: 'Bytebounce', fontSize: 35, color: '#000000', textAlign: 'center' }}>Vs</Text>
@@ -142,7 +142,7 @@ export default function GameModeScreen(): JSX.Element {
             {/* Player vs AI */}
             <TouchableOpacity
               className="bg-[#bde6ff] rounded-xl p-6 w-full shadow"
-              onPress={() => navigation.navigate('PvAIScreen')}
+              onPress={() => navigation.navigate('PvAISettings')}
             >
               <Text style={{ fontFamily: 'Bytebounce', fontSize: 40, color: '#2563eb', textAlign: 'center' }}>Player</Text>
               <Text style={{ fontFamily: 'Bytebounce', fontSize: 35, color: '#000000', textAlign: 'center' }}>Vs</Text>

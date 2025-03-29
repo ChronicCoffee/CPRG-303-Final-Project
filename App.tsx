@@ -6,6 +6,7 @@ import { View, ActivityIndicator } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen';
 import GameModeScreen from './src/screens/GameModeScreen';
 import SettingsScreen from './src/screens/SettingsScreen'; 
+import PvPSettingsScreen from './src/screens/PvPSettingsScreen'; 
 
 
 
@@ -30,6 +31,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="GameMode" component={GameModeScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="PvPSettings" component={PvPSettingsScreen} />
         {/* Future Screens: PvP, PvAI, etc */}
         {/* <Stack.Screen name="PvP" component={PvPScreen} /> */}
         {/* <Stack.Screen name="PvAI" component={PvAIScreen} /> */}
