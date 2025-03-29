@@ -2,10 +2,13 @@ import React, { useMemo } from 'react';
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Settings } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native'; 
 
 const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen(): JSX.Element {
+  const navigation = useNavigation(); 
+
   const pixelArtImages = useMemo(() => {
     const items: { id: number; top: number; left: number; size: number; }[] = [];
     const attempts = 100;
@@ -66,10 +69,10 @@ export default function HomeScreen(): JSX.Element {
 
       {/* Main Content */}
       <View className="flex-1 items-center justify-center px-6">
-      <View className="items-center" style={{ marginBottom: 200 }}>
+        <View className="items-center" style={{ marginBottom: 200 }}>
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 100,
               textShadowColor: '#00000066',
               textShadowOffset: { width: 2, height: 2 },
@@ -82,7 +85,7 @@ export default function HomeScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 55,
               textShadowColor: '#00000066',
               textShadowOffset: { width: 2, height: 2 },
@@ -95,7 +98,7 @@ export default function HomeScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 100,
               textShadowColor: '#00000066',
               textShadowOffset: { width: 2, height: 2 },
@@ -112,10 +115,11 @@ export default function HomeScreen(): JSX.Element {
         <TouchableOpacity
           className="bg-[#63c4f1] border-4 border-[#eecfb3] rounded-full px-8 py-3 shadow"
           style={{ marginBottom: 40 }}
+          onPress={() => navigation.navigate('GameMode')} 
         >
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 38,
               color: '#000',
             }}
