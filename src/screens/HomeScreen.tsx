@@ -140,6 +140,7 @@ export default function HomeScreen(): JSX.Element {
         {/* Settings Button */}
         <TouchableOpacity
           className="bg-[#63c4f1] border-4 border-[#eecfb3] rounded-full w-14 h-14 items-center justify-center shadow"
+          onPress={() => navigation.navigate('Settings')}
         >
           <Settings size={24} color="black" />
         </TouchableOpacity>

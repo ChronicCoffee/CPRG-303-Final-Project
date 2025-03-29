@@ -5,6 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, ActivityIndicator } from 'react-native';
 import HomeScreen from './src/screens/HomeScreen';
 import GameModeScreen from './src/screens/GameModeScreen';
+import SettingsScreen from './src/screens/SettingsScreen'; 
+
 
 
 const Stack = createNativeStackNavigator();
@@ -27,7 +29,10 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="GameMode" component={GameModeScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
         {/* Future Screens: PvP, PvAI, etc */}
+        {/* <Stack.Screen name="PvP" component={PvPScreen} /> */}
+        {/* <Stack.Screen name="PvAI" component={PvAIScreen} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );
