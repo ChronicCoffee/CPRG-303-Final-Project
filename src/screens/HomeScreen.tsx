@@ -6,14 +6,20 @@ import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
+const iconSources = [
+  require('../../assets/pixelRock.png'),
+  require('../../assets/pixelPaper.png'),
+  require('../../assets/pixelScissors.png'),
+];
+
 export default function HomeScreen(): JSX.Element {
   const navigation = useNavigation(); 
 
   const pixelArtImages = useMemo(() => {
-    const items: { id: number; top: number; left: number; size: number; }[] = [];
+    const items: { id: number; top: number; left: number; size: number; rotate: number; source: any }[] = [];
     const attempts = 100;
 
-    const isOverlapping = (a: { id?: number; top: any; left: any; size: any; }, b: { id?: number; top: any; left: any; size: any; }) => {
+    const isOverlapping = (a: { id?: number; top: any; left: any; size: any; rotate?: number; source?: any; }, b: { id?: number; top: any; left: any; size: any; rotate?: number; source?: any; }) => {
       return !(
         a.left + a.size < b.left ||
         a.left > b.left + b.size ||
@@ -22,14 +28,16 @@ export default function HomeScreen(): JSX.Element {
       );
     };
 
-    for (let i = 0; i < 30 && attempts > 0; i++) {
+    for (let i = 0; i < 35 && attempts > 0; i++) {
       let tries = 0;
       while (tries < attempts) {
-        const size = 32 + Math.random() * 24;
+        const size = 40 + Math.random() * 60;
         const top = Math.random() * (height - size - 100);
         const left = Math.random() * (width - size);
+        const rotate = Math.floor(Math.random() * 360);
+        const source = iconSources[Math.floor(Math.random() * iconSources.length)];
 
-        const newItem = { id: i, top, left, size };
+        const newItem = { id: i, top, left, size, rotate, source };
 
         const collision = items.some(existing => isOverlapping(existing, newItem));
         if (!collision) {
@@ -51,10 +59,10 @@ export default function HomeScreen(): JSX.Element {
       />
 
       {/* Pixel Art Background */}
-      {pixelArtImages.map(({ id, top, left, size }) => (
+      {pixelArtImages.map(({ id, top, left, size, rotate, source }) => (
         <Image
           key={id}
-          source={require('../../assets/pixelRock.png')}
+          source={source}
           style={{
             position: 'absolute',
             top,
@@ -62,6 +70,7 @@ export default function HomeScreen(): JSX.Element {
             width: size,
             height: size,
             opacity: 0.6,
+            transform: [{ rotate: `${rotate}deg` }],
           }}
           resizeMode="contain"
         />
