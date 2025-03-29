@@ -6,20 +6,38 @@ import { Settings } from 'lucide-react-native';
 const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen(): JSX.Element {
-  
+  // Avoid overlapping pixel icons
   const pixelArtImages = useMemo(() => {
     const items = [];
-    for (let i = 0; i < 30; i++) {
-      const randomTop = Math.random() * height * 0.9;
-      const randomLeft = Math.random() * width * 0.9;
-      const size = 32 + Math.random() * 24; 
-      items.push({
-        id: i,
-        top: randomTop,
-        left: randomLeft,
-        size,
-      });
+    const attempts = 100;
+
+    const isOverlapping = (a, b) => {
+      return !(
+        a.left + a.size < b.left ||
+        a.left > b.left + b.size ||
+        a.top + a.size < b.top ||
+        a.top > b.top + b.size
+      );
+    };
+
+    for (let i = 0; i < 30 && attempts > 0; i++) {
+      let tries = 0;
+      while (tries < attempts) {
+        const size = 32 + Math.random() * 24;
+        const top = Math.random() * (height - size - 100); // avoid bottom buttons
+        const left = Math.random() * (width - size);
+
+        const newItem = { id: i, top, left, size };
+
+        const collision = items.some(existing => isOverlapping(existing, newItem));
+        if (!collision) {
+          items.push(newItem);
+          break;
+        }
+        tries++;
+      }
     }
+
     return items;
   }, []);
 
@@ -41,7 +59,7 @@ export default function HomeScreen(): JSX.Element {
             left,
             width: size,
             height: size,
-            opacity: 0.3,
+            opacity: 0.6,
           }}
           resizeMode="contain"
         />
@@ -49,11 +67,11 @@ export default function HomeScreen(): JSX.Element {
 
       {/* Main Content */}
       <View className="flex-1 items-center justify-center px-6">
-        <View className="items-center mb-16">
+        <View className="items-center mb-24"> {/* Increased margin below title */}
           <Text
             style={{
-              fontFamily: 'ByteBounce-Medium',
-              fontSize: 48,
+              fontFamily: 'ByteBound',
+              fontSize: 64,
               textShadowColor: '#00000066',
               textShadowOffset: { width: 2, height: 2 },
               textShadowRadius: 2,
@@ -65,7 +83,7 @@ export default function HomeScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'ByteBounce-Medium',
+              fontFamily: 'ByteBound',
               fontSize: 40,
               textShadowColor: '#00000066',
               textShadowOffset: { width: 2, height: 2 },
@@ -78,8 +96,8 @@ export default function HomeScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'ByteBounce-Medium',
-              fontSize: 48,
+              fontFamily: 'ByteBound',
+              fontSize: 64,
               textShadowColor: '#00000066',
               textShadowOffset: { width: 2, height: 2 },
               textShadowRadius: 2,
@@ -94,11 +112,11 @@ export default function HomeScreen(): JSX.Element {
         {/* Start Game Button */}
         <TouchableOpacity
           className="bg-[#63c4f1] border-4 border-[#eecfb3] rounded-full px-8 py-3 shadow"
-          style={{ marginBottom: 32 }}
+          style={{ marginBottom: 40 }}
         >
           <Text
             style={{
-              fontFamily: 'ByteBounce-Medium',
+              fontFamily: 'ByteBound',
               fontSize: 24,
               color: '#000',
             }}
