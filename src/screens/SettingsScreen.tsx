@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-import { Volume2, VolumeX, Info, HelpCircle } from 'lucide-react-native';
+import { Volume2, VolumeX, HelpCircle } from 'lucide-react-native';
 
 const { width, height } = Dimensions.get('window');
 
