@@ -21,7 +21,7 @@ const iconSources = {
 const choices = ['Rock', 'Paper', 'Scissors'] as const;
 
 export default function PvPTimedScreen(): JSX.Element {
-  const [gameTimer, setGameTimer] = useState(60);
+  const [gameTimer, setGameTimer] = useState(10);
   const [round, setRound] = useState(1);
   const [player1Choice, setPlayer1Choice] = useState<string | null>(null);
   const [player2Choice, setPlayer2Choice] = useState<string | null>(null);
@@ -34,6 +34,7 @@ export default function PvPTimedScreen(): JSX.Element {
   const [result, setResult] = useState('');
   const [score, setScore] = useState({ p1: 0, p2: 0 });
   const [gameOver, setGameOver] = useState(false);
+  const [finalResult, setFinalResult] = useState('');
 
   useEffect(() => {
     if (player1Choice && player2Choice) startSequence();
@@ -121,13 +122,16 @@ export default function PvPTimedScreen(): JSX.Element {
     setTimeout(() => {
       if (gameTimer <= 0) {
         setGameOver(true);
-        setResult(
-          score.p1 > score.p2 ? 'Player 1 is the Winner!' :
-          score.p2 > score.p1 ? 'Player 2 is the Winner!' :
-          'It\'s a Tie!'
-        );
+        const final =
+          newScore.p1 > newScore.p2
+            ? '🏆 Player 1 is the Winner!'
+            : newScore.p2 > newScore.p1
+            ? '🏆 Player 2 is the Winner!'
+            : "🤝 It's a Tie!";
+        setFinalResult(final);
         return;
       }
+
       setRound((r) => r + 1);
       setResult('');
       setPlayer1Choice(null);
@@ -167,30 +171,42 @@ export default function PvPTimedScreen(): JSX.Element {
         className="absolute w-full h-full"
       />
       <View className="flex-1 items-center justify-start pt-24 px-4">
+        {/* Title */}
         <Text style={titleStyle}>CLASH</Text>
         <Text style={subtitleStyle}>OF</Text>
         <Text style={footerTitleStyle}>HANDS</Text>
 
         {/* Scoreboard */}
         <View className="flex-row justify-between items-center w-full mt-6 mb-4 px-4 py-3"
-              style={{ backgroundColor: '#82cfff', borderColor: '#f4d5a6', borderWidth: 4, borderRadius: 16, maxWidth: 380 }}>
-          <Text style={scoreStyle}>P1 🟦 {score.p1}</Text>
+              style={{ backgroundColor: '#fdf5e6', borderColor: '#f4d5a6', borderWidth: 4, borderRadius: 16, maxWidth: 380 }}>
           <View style={{ alignItems: 'center' }}>
-            <Text style={timerLabel}>🕹️ ROUND {round}</Text>
+            <Text style={playerLabel}>👤 Player 1</Text>
+            <Text style={scoreStyle}>Score: {score.p1}</Text>
+          </View>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={timerLabel}>🕹️ Round {round}</Text>
             <Text style={timerClock}>⏱️ {gameTimer}s</Text>
           </View>
-          <Text style={scoreStyle}>{score.p2} 🟥 P2</Text>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={playerLabel}>Player 2 👤</Text>
+            <Text style={scoreStyle}>Score: {score.p2}</Text>
+          </View>
         </View>
 
         {/* Game Info */}
-        {!sequenceRunning && !gameOver && (
+        {!sequenceRunning && !gameOver && !!result && (
+          <Text style={infoText}>{result}</Text>
+        )}
+        {!sequenceRunning && !gameOver && !result && (
           <Text style={infoText}>
-            {result || (isPlayer1Turn
+            {isPlayer1Turn
               ? `Player 1's Turn (${turnTimer}s)`
-              : `Player 2's Turn (${turnTimer}s)`)}
+              : `Player 2's Turn (${turnTimer}s)`}
           </Text>
         )}
-        {!!result && <Text style={infoText}>{result}</Text>}
+        {!!gameOver && (
+          <Text style={[infoText, { marginTop: 10 }]}>{finalResult}</Text>
+        )}
 
         {/* Game UI */}
         {sequenceRunning ? (
@@ -228,7 +244,7 @@ export default function PvPTimedScreen(): JSX.Element {
   );
 }
 
-// Styles
+// === STYLES ===
 const titleStyle = {
   fontFamily: 'ByteBounce',
   fontSize: 60,
@@ -261,20 +277,26 @@ const footerTitleStyle = {
 
 const scoreStyle = {
   fontFamily: 'ByteBounce',
-  fontSize: 22,
+  fontSize: 20,
   color: '#000',
+};
+
+const playerLabel = {
+  fontFamily: 'ByteBounce',
+  fontSize: 18,
+  color: '#333',
 };
 
 const timerLabel = {
   fontFamily: 'ByteBounce',
   fontSize: 18,
-  color: '#222',
+  color: '#000',
 };
 
 const timerClock = {
   fontFamily: 'ByteBounce',
-  fontSize: 24,
-  color: '#000',
+  fontSize: 26,
+  color: '#111',
   textShadowColor: '#fff',
   textShadowOffset: { width: 1, height: 1 },
   textShadowRadius: 1,
