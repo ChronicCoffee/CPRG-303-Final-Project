@@ -52,8 +52,7 @@ export default function PvPSettingsScreen(): JSX.Element {
     }
   
     return items;
-  }, []);
-  
+  }, []);  
 
   const modeColorMap = {
     Timed: '#3b82f6',
@@ -156,9 +155,8 @@ export default function PvPSettingsScreen(): JSX.Element {
 
               <TouchableOpacity
                 className="bg-[#63c4f1] rounded-xl py-3 px-10 shadow border-4 border-[#f4d5a6]"
-                onPress={() => {
-                  // Replace with game start logic
-                  console.log('Continue with:', gameMode);
+                onPress={() => { if (gameMode === 'Timed') {
+                  navigation.navigate('PvPTimed'); } else if (gameMode === 'BestOf3') { navigation.navigate('PvPBestOf3'); }
                 }}
               >
                 <Text style={{ fontFamily: 'ByteBounce', fontSize: 22, color: '#000000' }}>Continue</Text>
