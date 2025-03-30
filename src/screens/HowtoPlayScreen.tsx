@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, Image, ScrollView, Dimensions } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
@@ -34,7 +34,6 @@ export default function HowToPlayScreen(): JSX.Element {
         className="absolute w-full h-full"
       />
 
-      {/* Background pixel icons */}
       {pixelArtImages.map(({ id, top, left, size, rotate, source }) => (
         <Image
           key={id}
@@ -52,8 +51,7 @@ export default function HowToPlayScreen(): JSX.Element {
         />
       ))}
 
-      {/* Main content */}
-      <ScrollView contentContainerStyle={{ padding: 24, paddingTop: 100 }}>
+      <ScrollView contentContainerStyle={{ padding: 24, paddingTop: 100, paddingBottom: 80 }}>
         {/* Title */}
         <Text
           style={{
@@ -70,7 +68,7 @@ export default function HowToPlayScreen(): JSX.Element {
           HOW TO PLAY
         </Text>
 
-        {/* Section Box */}
+        {/* Sections */}
         <View className="bg-[#82cfff] border-4 border-[#f4d5a6] rounded-2xl p-5 mb-6 shadow">
           <Text style={sectionTitle}>🕹️ Basic Rules</Text>
           <Text style={sectionText}>
@@ -102,11 +100,18 @@ export default function HowToPlayScreen(): JSX.Element {
             • Customize your game mode and start battling!
           </Text>
         </View>
+
+        {/* Back Button */}
+        <TouchableOpacity
+          className="bg-[#c6e8ff] border-4 border-[#f4d5a6] rounded-xl px-10 py-4 items-center self-center shadow"
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={{ fontFamily: 'ByteBounce', fontSize: 22, color: '#000' }}>Back</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
 }
-
 
 const sectionTitle = {
   fontFamily: 'ByteBounce',
@@ -126,4 +131,3 @@ const sectionText = {
   lineHeight: 30,
   textAlign: 'center',
 };
-
