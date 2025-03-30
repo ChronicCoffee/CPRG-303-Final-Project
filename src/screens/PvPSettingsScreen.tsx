@@ -145,9 +145,9 @@ export default function PvPSettingsScreen(): JSX.Element {
             </TouchableOpacity>
 
             {/* Bottom Buttons */}
-            <View className="flex-row space-x-4 mt-2">
+            <View className="flex-row justify-center items-center mt-2 space-x-4">
               <TouchableOpacity
-                className="bg-[#c6e8ff] rounded-xl py-3 px-10 shadow"
+                className="bg-[#c6e8ff] rounded-xl py-3 px-10  shadow"
                 onPress={() => navigation.goBack()}
               >
                 <Text style={{ fontFamily: 'ByteBounce', fontSize: 22, color: '#000000' }}>Back</Text>
