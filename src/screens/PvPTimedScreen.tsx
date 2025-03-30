@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  Animated,
-} from 'react-native';
+import { View, Text, Image, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
@@ -233,16 +226,16 @@ export default function PvPTimedScreen(): JSX.Element {
           <View className="items-center mt-10">
             <Animated.Image
               source={icon}
-              style={{ width: 140, height: 140, transform: [{ scale: animationScale }] }}
+              style={{ width: 180, height: 180, transform: [{ scale: animationScale }] }}
               resizeMode="contain"
             />
             <Text style={labelStyle}>{label}</Text>
           </View>
         ) : (
-          <View className="flex-row justify-between space-x-4 mt-10">
+          <View className="flex-row justify-between space-x-4 mt-14">
             {choices.map((choice) => (
               <TouchableOpacity key={choice} onPress={() => handleChoice(choice)}>
-                <Image source={iconSources[choice]} style={{ width: 90, height: 90 }} resizeMode="contain" />
+                <Image source={iconSources[choice]} style={{ width: 120, height: 120 }} resizeMode="contain" />
                 <Text style={labelStyle}>{choice}</Text>
               </TouchableOpacity>
             ))}
@@ -255,7 +248,7 @@ export default function PvPTimedScreen(): JSX.Element {
             onPress={giveUp}
             className="bg-red-300 mt-10 px-6 py-3 rounded-xl border-2 border-red-700"
           >
-            <Text style={{ fontFamily: 'ByteBounce', fontSize: 18, color: '#000' }}>Give Up</Text>
+            <Text style={{ fontFamily: 'ByteBounce', fontSize: 25, color: '#000' }}>Give Up</Text>
           </TouchableOpacity>
         )}
 
@@ -264,7 +257,7 @@ export default function PvPTimedScreen(): JSX.Element {
             onPress={playAgain}
             className="bg-green-300 mt-10 px-8 py-4 rounded-xl border-2 border-green-600"
           >
-            <Text style={{ fontFamily: 'ByteBounce', fontSize: 20, color: '#000' }}>Play Again</Text>
+            <Text style={{ fontFamily: 'ByteBounce', fontSize: 25, color: '#000' }}>Play Again</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -275,7 +268,7 @@ export default function PvPTimedScreen(): JSX.Element {
 // === STYLES ===
 const titleStyle = {
   fontFamily: 'ByteBounce',
-  fontSize: 60,
+  fontSize: 100,
   color: '#ff7072',
   textAlign: 'center',
   textShadowColor: '#000000aa',
@@ -285,7 +278,7 @@ const titleStyle = {
 
 const subtitleStyle = {
   fontFamily: 'ByteBounce',
-  fontSize: 36,
+  fontSize: 50,
   color: '#000',
   textAlign: 'center',
   textShadowColor: '#000000aa',
@@ -295,7 +288,7 @@ const subtitleStyle = {
 
 const footerTitleStyle = {
   fontFamily: 'ByteBounce',
-  fontSize: 60,
+  fontSize: 100,
   color: '#e5aa7a',
   textAlign: 'center',
   textShadowColor: '#000000aa',
@@ -305,25 +298,25 @@ const footerTitleStyle = {
 
 const scoreStyle = {
   fontFamily: 'ByteBounce',
-  fontSize: 20,
+  fontSize: 22,
   color: '#000',
 };
 
 const playerLabel = {
   fontFamily: 'ByteBounce',
-  fontSize: 18,
+  fontSize:25,
   color: '#333',
 };
 
 const timerLabel = {
   fontFamily: 'ByteBounce',
-  fontSize: 18,
+  fontSize: 23,
   color: '#000',
 };
 
 const timerClock = {
   fontFamily: 'ByteBounce',
-  fontSize: 26,
+  fontSize: 31,
   color: '#111',
   textShadowColor: '#fff',
   textShadowOffset: { width: 1, height: 1 },
@@ -332,7 +325,7 @@ const timerClock = {
 
 const infoText = {
   fontFamily: 'ByteBounce',
-  fontSize: 22,
+  fontSize: 38,
   color: '#000',
   marginTop: 8,
   textAlign: 'center',
@@ -340,8 +333,8 @@ const infoText = {
 
 const labelStyle = {
   fontFamily: 'ByteBounce',
-  fontSize: 22,
-  marginTop: 6,
+  fontSize: 25,
+  marginTop: 20,
   color: '#000',
   textAlign: 'center',
 };
