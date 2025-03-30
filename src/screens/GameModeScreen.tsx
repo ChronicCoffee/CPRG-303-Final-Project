@@ -71,7 +71,7 @@ export default function GameModeScreen(): JSX.Element {
         <View className="items-center mb-12">
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 100,
               color: '#ff7072',
               textAlign: 'center',
@@ -84,7 +84,7 @@ export default function GameModeScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 48,
               color: '#000',
               textAlign: 'center',
@@ -97,7 +97,7 @@ export default function GameModeScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 100,
               color: '#e5aa7a',
               textAlign: 'center',
@@ -119,7 +119,7 @@ export default function GameModeScreen(): JSX.Element {
             <Text
               className="text-white text-center"
               style={{
-                fontFamily: 'Bytebounce',
+                fontFamily: 'ByteBounce',
                 fontSize: 35,
                 textShadowColor: '#00000066',
                 textShadowOffset: { width: 2, height: 2 },
@@ -134,9 +134,9 @@ export default function GameModeScreen(): JSX.Element {
               className="bg-[#bde6ff] rounded-xl p-6 w-full shadow"
               onPress={() => navigation.navigate('PvPSettings')}
             >
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 40, color: '#2563eb', textAlign: 'center' }}>Player</Text>
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 35, color: '#000000', textAlign: 'center' }}>Vs</Text>
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 40, color: '#ef4444', textAlign: 'center' }}>Player</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 40, color: '#2563eb', textAlign: 'center' }}>Player</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 35, color: '#000000', textAlign: 'center' }}>Vs</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 40, color: '#ef4444', textAlign: 'center' }}>Player</Text>
             </TouchableOpacity>
 
             {/* Player vs AI */}
@@ -144,9 +144,9 @@ export default function GameModeScreen(): JSX.Element {
               className="bg-[#bde6ff] rounded-xl p-6 w-full shadow"
               onPress={() => navigation.navigate('PvAiSettings')}
             >
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 40, color: '#2563eb', textAlign: 'center' }}>Player</Text>
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 35, color: '#000000', textAlign: 'center' }}>Vs</Text>
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 40, color: '#22c55e', textAlign: 'center' }}>Ai</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 40, color: '#2563eb', textAlign: 'center' }}>Player</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 35, color: '#000000', textAlign: 'center' }}>Vs</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 40, color: '#22c55e', textAlign: 'center' }}>Ai</Text>
             </TouchableOpacity>
 
             {/* Back Button */}
@@ -154,7 +154,7 @@ export default function GameModeScreen(): JSX.Element {
               className="bg-[#c6e8ff] rounded-xl py-5 px-12 items-center shadow"
               onPress={() => navigation.goBack()}
             >
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 22, color: '#000000' }}>Back</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 22, color: '#000000' }}>Back</Text>
             </TouchableOpacity>
           </View>
         </View>

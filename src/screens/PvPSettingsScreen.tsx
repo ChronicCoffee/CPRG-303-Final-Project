@@ -79,7 +79,7 @@ export default function PvPSettingsScreen(): JSX.Element {
         {/* Title */}
         <View className="items-center mb-12">
           <Text style={{
-            fontFamily: 'Bytebounce',
+            fontFamily: 'ByteBounce',
             fontSize: 100,
             color: '#ff7072',
             textAlign: 'center',
@@ -90,7 +90,7 @@ export default function PvPSettingsScreen(): JSX.Element {
             CLASH
           </Text>
           <Text style={{
-            fontFamily: 'Bytebounce',
+            fontFamily: 'ByteBounce',
             fontSize: 48,
             color: '#000',
             textAlign: 'center',
@@ -101,7 +101,7 @@ export default function PvPSettingsScreen(): JSX.Element {
             OF
           </Text>
           <Text style={{
-            fontFamily: 'Bytebounce',
+            fontFamily: 'ByteBounce',
             fontSize: 100,
             color: '#e5aa7a',
             textAlign: 'center',
@@ -121,7 +121,7 @@ export default function PvPSettingsScreen(): JSX.Element {
           <View className="flex-1 justify-between items-center">
 
             <Text style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 35,
               color: '#fff',
               textShadowColor: '#00000066',
@@ -135,12 +135,12 @@ export default function PvPSettingsScreen(): JSX.Element {
             {/* Timed Mode */}
             <TouchableOpacity className="bg-[#bde6ff] rounded-xl p-4 w-full shadow flex-row items-center justify-center space-x-2">
               <Clock size={20} color="black" style={{ marginRight: 8 }} />
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 30, color: '#000' }}>Timed</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 30, color: '#000' }}>Timed</Text>
             </TouchableOpacity>
 
             {/* Best of 3 */}
             <TouchableOpacity className="bg-[#bde6ff] rounded-xl p-4 w-full shadow flex-row items-center justify-center space-x-2">
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 30, color: '#000' }}>📊 Best of 3</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 30, color: '#000' }}>📊 Best of 3</Text>
             </TouchableOpacity>
 
             {/* Back */}
@@ -148,7 +148,7 @@ export default function PvPSettingsScreen(): JSX.Element {
               className="bg-[#c6e8ff] rounded-xl py-4 px-12 items-center shadow"
               onPress={() => navigation.goBack()}
             >
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 22, color: '#000000' }}>Back</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 22, color: '#000000' }}>Back</Text>
             </TouchableOpacity>
           </View>
         </View>

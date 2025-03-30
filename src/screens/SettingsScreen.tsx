@@ -72,7 +72,7 @@ export default function SettingsScreen(): JSX.Element {
         <View className="items-center mb-12">
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 100,
               color: '#ff7072',
               textAlign: 'center',
@@ -85,7 +85,7 @@ export default function SettingsScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 48,
               color: '#000',
               textAlign: 'center',
@@ -98,7 +98,7 @@ export default function SettingsScreen(): JSX.Element {
           </Text>
           <Text
             style={{
-              fontFamily: 'Bytebounce',
+              fontFamily: 'ByteBounce',
               fontSize: 100,
               color: '#e5aa7a',
               textAlign: 'center',
@@ -114,13 +114,13 @@ export default function SettingsScreen(): JSX.Element {
         {/* Settings Card */}
         <View className="w-full max-w-[380px] bg-[#82cfff] rounded-2xl border-4 border-[#f4d5a6] p-6" style={{ height: height * 0.5 }}>
           <View className="flex-1 justify-evenly items-center">
-            <Text style={{ fontFamily: 'Bytebounce', fontSize: 50, color: '#fff', textShadowColor: '#00000066', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 2 }}>
+            <Text style={{ fontFamily: 'ByteBounce', fontSize: 50, color: '#fff', textShadowColor: '#00000066', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 2 }}>
               Settings
             </Text>
 
             {/* Volume Toggle */}
             <View className="items-center">
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 22, marginBottom: 6 }}>Volume</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 22, marginBottom: 6 }}>Volume</Text>
               <TouchableOpacity
                 className="bg-[#c6e8ff] border-4 border-[#f4d5a6] rounded-full px-8 py-2 shadow"
                 onPress={() => setIsMuted(!isMuted)}
@@ -131,7 +131,7 @@ export default function SettingsScreen(): JSX.Element {
 
             {/* How to Play */}
             <View className="items-center">
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 22, marginBottom: 6 }}>How to Play</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 22, marginBottom: 6 }}>How to Play</Text>
               <TouchableOpacity 
                 className="bg-[#c6e8ff] border-4 border-[#f4d5a6] rounded-full px-8 py-2 shadow"
                 onPress={() => navigation.navigate('HowToPlay')}
@@ -145,7 +145,7 @@ export default function SettingsScreen(): JSX.Element {
               className="bg-[#c6e8ff] border-4 border-[#f4d5a6] rounded-full px-8 py-2 shadow"
               onPress={() => navigation.goBack()}
             >
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 20, color: '#000' }}>Back</Text>
+              <Text style={{ fontFamily: 'ByteBounce', fontSize: 20, color: '#000' }}>Back</Text>
             </TouchableOpacity>
           </View>
         </View>

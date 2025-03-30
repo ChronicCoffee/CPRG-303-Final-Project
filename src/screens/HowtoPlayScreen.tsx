@@ -57,7 +57,7 @@ export default function HowToPlayScreen(): JSX.Element {
         {/* Title */}
         <Text
           style={{
-            fontFamily: 'Bytebounce',
+            fontFamily: 'ByteBounce',
             fontSize: 50,
             color: '#fff',
             textAlign: 'center',
@@ -109,7 +109,7 @@ export default function HowToPlayScreen(): JSX.Element {
 
 
 const sectionTitle = {
-  fontFamily: 'Bytebounce',
+  fontFamily: 'ByteBounce',
   fontSize: 35,
   color: '#000',
   marginBottom: 8,
@@ -120,7 +120,7 @@ const sectionTitle = {
 };
 
 const sectionText = {
-  fontFamily: 'Bytebounce',
+  fontFamily: 'ByteBounce',
   fontSize: 23,
   color: '#222',
   lineHeight: 30,

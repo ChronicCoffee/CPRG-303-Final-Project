@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-import { Brain, Timer } from 'lucide-react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,9 +13,8 @@ const iconSources = [
 
 export default function PvAiSettingsScreen(): JSX.Element {
   const navigation = useNavigation();
-
-  const [aiDifficulty, setAiDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Easy');
-  const [gameMode, setGameMode] = useState<'Timed' | 'BestOf3'>('Timed');
+  const [aiDifficulty, setAiDifficulty] = useState<'Easy' | 'Medium' | 'Hard' | null>(null);
+  const [gameMode, setGameMode] = useState<'Timed' | 'BestOf3' | null>(null);
 
   const pixelArtImages = useMemo(() => {
     const items = [];
@@ -41,6 +39,8 @@ export default function PvAiSettingsScreen(): JSX.Element {
     Timed: '#3b82f6',
     BestOf3: '#a855f7',
   };
+
+  const isReady = aiDifficulty && gameMode;
 
   return (
     <View className="flex-1">
@@ -76,34 +76,35 @@ export default function PvAiSettingsScreen(): JSX.Element {
 
         {/* Settings Card */}
         <View
-          className="w-full max-w-[380px] bg-[#82cfff] rounded-2xl border-4 border-[#f4d5a6] p-10"
+          className="w-full max-w-[380px] bg-[#82cfff] rounded-2xl border-4 border-[#f4d5a6] p-6"
           style={{ height: height * 0.5 }}
         >
           <View className="flex-1 justify-between items-center">
 
             {/* AI Difficulty */}
             <Text style={sectionTitle}>AI Difficulty</Text>
-            <View className="flex-row justify-center items-center space-x-4">
+            <View className="flex-row flex-wrap justify-center items-center gap-2">
               {(['Easy', 'Medium', 'Hard'] as const).map(level => {
                 const isSelected = aiDifficulty === level;
                 return (
                   <TouchableOpacity
                     key={level}
                     onPress={() => setAiDifficulty(level)}
-                    className="px-4 py-2 rounded-full"
                     style={{
+                      paddingVertical: Platform.OS === 'android' ? 8 : 10,
+                      paddingHorizontal: Platform.OS === 'android' ? 16 : 20,
+                      borderRadius: 999,
                       borderWidth: 2,
                       borderColor: colorMap[level],
-                      backgroundColor: isSelected ? colorMap[level] : '#ffffff',
+                      backgroundColor: isSelected ? colorMap[level] : '#fff',
+                      marginHorizontal: 6,
                     }}
                   >
-                    <Text
-                      style={{
-                        fontFamily: 'Bytebounce',
-                        fontSize: 24,
-                        color: isSelected ? '#ffffff' : colorMap[level],
-                      }}
-                    >
+                    <Text style={{
+                      fontFamily: 'Bytebounce',
+                      fontSize: 22,
+                      color: isSelected ? '#fff' : colorMap[level],
+                    }}>
                       {level}
                     </Text>
                   </TouchableOpacity>
@@ -113,27 +114,28 @@ export default function PvAiSettingsScreen(): JSX.Element {
 
             {/* Game Mode */}
             <Text style={sectionTitle}>Game Mode</Text>
-            <View className="flex-row justify-center items-center space-x-4">
+            <View className="flex-row flex-wrap justify-center items-center gap-2">
               {(['Timed', 'BestOf3'] as const).map(mode => {
                 const isSelected = gameMode === mode;
                 return (
                   <TouchableOpacity
                     key={mode}
                     onPress={() => setGameMode(mode)}
-                    className="px-4 py-2 rounded-full"
                     style={{
+                      paddingVertical: Platform.OS === 'android' ? 8 : 10,
+                      paddingHorizontal: Platform.OS === 'android' ? 16 : 20,
+                      borderRadius: 999,
                       borderWidth: 2,
                       borderColor: modeColorMap[mode],
-                      backgroundColor: isSelected ? modeColorMap[mode] : '#ffffff',
+                      backgroundColor: isSelected ? modeColorMap[mode] : '#fff',
+                      marginHorizontal: 6,
                     }}
                   >
-                    <Text
-                      style={{
-                        fontFamily: 'Bytebounce',
-                        fontSize: 22,
-                        color: isSelected ? '#ffffff' : modeColorMap[mode],
-                      }}
-                    >
+                    <Text style={{
+                      fontFamily: 'Bytebounce',
+                      fontSize: 22,
+                      color: isSelected ? '#fff' : modeColorMap[mode],
+                    }}>
                       {mode === 'Timed' ? '⏱ Timed' : '📊 Best of 3'}
                     </Text>
                   </TouchableOpacity>
@@ -141,15 +143,31 @@ export default function PvAiSettingsScreen(): JSX.Element {
               })}
             </View>
 
-            {/* Back Button */}
-            <TouchableOpacity
-              className="bg-[#c6e8ff] rounded-xl py-4 px-12 items-center shadow mt-2"
-              onPress={() => navigation.goBack()}
-            >
-              <Text style={{ fontFamily: 'Bytebounce', fontSize: 22, color: '#000000' }}>
-                Back
-              </Text>
-            </TouchableOpacity>
+            {/* Action Buttons */}
+            <View className="flex-row justify-center items-center mt-2 space-x-4">
+              <TouchableOpacity
+                className="bg-[#c6e8ff] rounded-xl py-3 px-8 items-center shadow"
+                onPress={() => navigation.goBack()}
+              >
+                <Text style={{ fontFamily: 'Bytebounce', fontSize: 22, color: '#000' }}>Back</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                disabled={!isReady}
+                className="rounded-xl py-3 px-8 items-center shadow"
+                style={{
+                  backgroundColor: isReady ? '#63c4f1' : '#9ecfe8',
+                  borderColor: '#eecfb3',
+                  borderWidth: 4,
+                  opacity: isReady ? 1 : 0.6,
+                }}
+                onPress={() => {
+                  navigation.navigate('PvAIScreen', { difficulty: aiDifficulty, mode: gameMode});
+                }}
+              >
+                <Text style={{ fontFamily: 'Bytebounce', fontSize: 22, color: '#000' }}>Continue</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -157,7 +175,7 @@ export default function PvAiSettingsScreen(): JSX.Element {
   );
 }
 
-
+// Text styles
 const titleStyle = {
   fontFamily: 'Bytebounce',
   fontSize: 100,
@@ -167,6 +185,7 @@ const titleStyle = {
   textShadowOffset: { width: 2, height: 2 },
   textShadowRadius: 2,
 };
+
 const subtitleStyle = {
   fontFamily: 'Bytebounce',
   fontSize: 48,
@@ -176,6 +195,7 @@ const subtitleStyle = {
   textShadowOffset: { width: 1, height: 1 },
   textShadowRadius: 1,
 };
+
 const footerTitleStyle = {
   fontFamily: 'Bytebounce',
   fontSize: 100,
@@ -185,6 +205,7 @@ const footerTitleStyle = {
   textShadowOffset: { width: 2, height: 2 },
   textShadowRadius: 2,
 };
+
 const sectionTitle = {
   fontFamily: 'Bytebounce',
   fontSize: 35,
@@ -193,4 +214,5 @@ const sectionTitle = {
   textShadowOffset: { width: 2, height: 2 },
   textShadowRadius: 2,
   marginBottom: 8,
+  textAlign: 'center',
 };
