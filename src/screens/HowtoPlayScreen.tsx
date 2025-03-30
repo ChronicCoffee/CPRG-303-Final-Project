@@ -15,17 +15,42 @@ export default function HowToPlayScreen(): JSX.Element {
   const navigation = useNavigation();
 
   const pixelArtImages = useMemo(() => {
-    const items = [];
-    for (let i = 0; i < 35; i++) {
-      const size = 40 + Math.random() * 60;
-      const top = Math.random() * (height - size - 100);
-      const left = Math.random() * (width - size);
-      const rotate = Math.floor(Math.random() * 360);
-      const source = iconSources[Math.floor(Math.random() * iconSources.length)];
-      items.push({ id: i, top, left, size, rotate, source });
+    const items: { id: number; top: number; left: number; size: number; rotate: number; source: any }[] = [];
+    const maxIcons = 60;
+    const maxTriesPerIcon = 100;
+  
+    const isOverlapping = (a: any, b: any) => {
+      return !(
+        a.left + a.size < b.left ||
+        a.left > b.left + b.size ||
+        a.top + a.size < b.top ||
+        a.top > b.top + b.size
+      );
+    };
+  
+    for (let i = 0; i < maxIcons; i++) {
+      let tries = 0;
+      while (tries < maxTriesPerIcon) {
+        const size = 40 + Math.random() * 60;
+        const top = Math.random() * (height - size - 100);
+        const left = Math.random() * (width - size);
+        const rotate = Math.floor(Math.random() * 360);
+        const source = iconSources[Math.floor(Math.random() * iconSources.length)];
+  
+        const newItem = { id: i, top, left, size, rotate, source };
+        const hasCollision = items.some(existing => isOverlapping(existing, newItem));
+  
+        if (!hasCollision) {
+          items.push(newItem);
+          break;
+        }
+  
+        tries++;
+      }
     }
+  
     return items;
-  }, []);
+  }, []);  
 
   return (
     <View className="flex-1">
