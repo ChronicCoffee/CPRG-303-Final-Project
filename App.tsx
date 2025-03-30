@@ -17,7 +17,7 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    Bytebounce: require('./assets/fonts/ByteBounce.ttf'),
+    ByteBounce: require('./assets/fonts/ByteBounce.ttf'),
   });
 
   if (!fontsLoaded) {
