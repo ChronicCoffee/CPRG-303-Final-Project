@@ -1,3 +1,4 @@
+// PvPTimedScreen.tsx
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -9,7 +10,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const iconSources = {
   Rock: require('../../assets/pixelRockGame.png'),
@@ -32,11 +33,10 @@ export default function PvPTimedScreen(): JSX.Element {
   const [label, setLabel] = useState(choices[0]);
   const [result, setResult] = useState('');
   const [score, setScore] = useState({ p1: 0, p2: 0 });
+  const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
-    if (player1Choice && player2Choice) {
-      startSequence();
-    }
+    if (player1Choice && player2Choice) startSequence();
   }, [player1Choice, player2Choice]);
 
   useEffect(() => {
@@ -50,16 +50,8 @@ export default function PvPTimedScreen(): JSX.Element {
       });
 
       Animated.sequence([
-        Animated.timing(animationScale, {
-          toValue: 1.2,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        Animated.timing(animationScale, {
-          toValue: 1,
-          duration: 100,
-          useNativeDriver: true,
-        }),
+        Animated.timing(animationScale, { toValue: 1.2, duration: 100, useNativeDriver: true }),
+        Animated.timing(animationScale, { toValue: 1, duration: 100, useNativeDriver: true }),
       ]).start();
     }, 300);
 
@@ -75,7 +67,7 @@ export default function PvPTimedScreen(): JSX.Element {
   }, [sequenceRunning]);
 
   useEffect(() => {
-    if (sequenceRunning) return;
+    if (sequenceRunning || gameOver) return;
 
     const timer = setInterval(() => {
       setTurnTimer((prev) => {
@@ -88,7 +80,7 @@ export default function PvPTimedScreen(): JSX.Element {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [sequenceRunning, isPlayer1Turn]);
+  }, [sequenceRunning, isPlayer1Turn, gameOver]);
 
   const handleTimeout = () => {
     const randomChoice = choices[Math.floor(Math.random() * choices.length)];
@@ -102,7 +94,11 @@ export default function PvPTimedScreen(): JSX.Element {
 
   const startSequence = () => {
     setSequenceRunning(true);
-    setGameTimer((prev) => prev - 5);
+    setGameTimer((prev) => {
+      const next = prev - 5;
+      if (next <= 0) setGameOver(true);
+      return next;
+    });
   };
 
   const handleRoundEnd = () => {
@@ -123,7 +119,15 @@ export default function PvPTimedScreen(): JSX.Element {
     setSequenceRunning(false);
 
     setTimeout(() => {
-      if (gameTimer <= 0) return;
+      if (gameTimer <= 0) {
+        setGameOver(true);
+        setResult(
+          score.p1 > score.p2 ? 'Player 1 is the Winner!' :
+          score.p2 > score.p1 ? 'Player 2 is the Winner!' :
+          'It\'s a Tie!'
+        );
+        return;
+      }
       setRound((r) => r + 1);
       setResult('');
       setPlayer1Choice(null);
@@ -139,14 +143,12 @@ export default function PvPTimedScreen(): JSX.Element {
       (p1 === 'Rock' && p2 === 'Scissors') ||
       (p1 === 'Paper' && p2 === 'Rock') ||
       (p1 === 'Scissors' && p2 === 'Paper')
-    ) {
-      return 'Player 1';
-    }
+    ) return 'Player 1';
     return 'Player 2';
   };
 
   const handleChoice = (choice: string) => {
-    if (sequenceRunning) return;
+    if (sequenceRunning || gameOver) return;
     if (isPlayer1Turn) {
       setPlayer1Choice(choice);
       setIsPlayer1Turn(false);
@@ -164,30 +166,33 @@ export default function PvPTimedScreen(): JSX.Element {
         colors={['#ff7173', '#cdecfb', '#63c4f1']}
         className="absolute w-full h-full"
       />
-
       <View className="flex-1 items-center justify-start pt-24 px-4">
-        {/* Title */}
         <Text style={titleStyle}>CLASH</Text>
         <Text style={subtitleStyle}>OF</Text>
         <Text style={footerTitleStyle}>HANDS</Text>
 
         {/* Scoreboard */}
-        <View className="flex-row justify-between items-center w-full max-w-[320px] mt-6 mb-2">
-          <Text style={scoreStyle}>P1: {score.p1}</Text>
-          <Text style={roundStyle}>⏱ {gameTimer}s | Round {round}</Text>
-          <Text style={scoreStyle}>P2: {score.p2}</Text>
+        <View className="flex-row justify-between items-center w-full mt-6 mb-4 px-4 py-3"
+              style={{ backgroundColor: '#82cfff', borderColor: '#f4d5a6', borderWidth: 4, borderRadius: 16, maxWidth: 380 }}>
+          <Text style={scoreStyle}>P1 🟦 {score.p1}</Text>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={timerLabel}>🕹️ ROUND {round}</Text>
+            <Text style={timerClock}>⏱️ {gameTimer}s</Text>
+          </View>
+          <Text style={scoreStyle}>{score.p2} 🟥 P2</Text>
         </View>
 
         {/* Game Info */}
-        <Text style={infoText}>
-          {result
-            ? result
-            : isPlayer1Turn
-            ? `Player 1's Turn (${turnTimer}s)`
-            : `Player 2's Turn (${turnTimer}s)`}
-        </Text>
+        {!sequenceRunning && !gameOver && (
+          <Text style={infoText}>
+            {result || (isPlayer1Turn
+              ? `Player 1's Turn (${turnTimer}s)`
+              : `Player 2's Turn (${turnTimer}s)`)}
+          </Text>
+        )}
+        {!!result && <Text style={infoText}>{result}</Text>}
 
-        {/* Sequence / Choices */}
+        {/* Game UI */}
         {sequenceRunning ? (
           <View className="items-center mt-10">
             <Animated.Image
@@ -260,10 +265,19 @@ const scoreStyle = {
   color: '#000',
 };
 
-const roundStyle = {
+const timerLabel = {
   fontFamily: 'ByteBounce',
-  fontSize: 20,
+  fontSize: 18,
+  color: '#222',
+};
+
+const timerClock = {
+  fontFamily: 'ByteBounce',
+  fontSize: 24,
   color: '#000',
+  textShadowColor: '#fff',
+  textShadowOffset: { width: 1, height: 1 },
+  textShadowRadius: 1,
 };
 
 const infoText = {
