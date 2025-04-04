@@ -74,6 +74,24 @@ export default function PvAIScreen() {
     }
   }, [playerChoice]);
 
+  // Add turnTimer effect for countdown
+  useEffect(() => {
+    if (!sequenceRunning && !gameOver && !playerChoice && turnTimer > 0) {
+      const timer = setInterval(() => {
+        setTurnTimer((prev) => {
+          if (prev <= 1) {
+            // Auto-select a random choice when timer runs out
+            handleChoice(choices[Math.floor(Math.random() * 3)]);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [sequenceRunning, gameOver, playerChoice, turnTimer]);
+
   useEffect(() => {
     if (sequenceRunning) {
       const interval = setInterval(() => {
@@ -172,7 +190,7 @@ export default function PvAIScreen() {
       setResult("");
       setPlayerChoice(null);
       setAiChoice(null);
-      setTurnTimer(10);
+      setTurnTimer(10); // Reset turn timer for next round
     }, 2000);
   };
 

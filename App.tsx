@@ -38,6 +38,7 @@ export default function App() {
         <Stack.Screen name="PvAiSettings" component={PvAiSettingsScreen} />
         <Stack.Screen name="HowToPlay" component={HowToPlayScreen} />
         <Stack.Screen name="PvPTimed" component={PvPTimedScreen} />
+        <Stack.Screen name="PvAIScreen" component={PvAIScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

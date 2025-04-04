@@ -8,10 +8,10 @@ import {
   StyleSheet,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import { Clock } from "lucide-react-native";
-import type { RouteProp } from "@react-navigation/native";
-import type { RootStackParamList } from "../../types";
+import { RootStackParamList } from "../../types";
 
 const { width, height } = Dimensions.get("window");
 
@@ -21,8 +21,13 @@ const iconSources = [
   require("../../assets/pixelScissors.png"),
 ];
 
-export default function PvAiSettingsScreen(): JSX.Element {
-  const navigation = useNavigation();
+type PvAiSettingsScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "PvAiSettings"
+>;
+
+export default function PvAISettingsScreen(): JSX.Element {
+  const navigation = useNavigation<PvAiSettingsScreenNavigationProp>();
   const [aiDifficulty, setAiDifficulty] = useState<"Easy" | "Medium" | "Hard">(
     "Medium"
   );
@@ -106,25 +111,23 @@ export default function PvAiSettingsScreen(): JSX.Element {
             height: size,
             opacity: 0.6,
             transform: [{ rotate: `${rotate}deg` }],
+            zIndex: 0,
           }}
           resizeMode="contain"
         />
       ))}
 
       <View style={styles.contentContainer}>
-        {/* Title */}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>CLASH</Text>
           <Text style={styles.subtitle}>OF</Text>
           <Text style={styles.footerTitle}>HANDS</Text>
         </View>
 
-        {/* Settings Card */}
         <View style={styles.settingsCard}>
           <View style={styles.settingsContent}>
             <Text style={styles.sectionTitle}>Mode Settings</Text>
 
-            {/* AI Difficulty Selection */}
             <Text style={styles.subsectionTitle}>AI Difficulty</Text>
             <View style={styles.optionsContainer}>
               {(["Easy", "Medium", "Hard"] as const).map((level) => {
@@ -160,7 +163,6 @@ export default function PvAiSettingsScreen(): JSX.Element {
               })}
             </View>
 
-            {/* Game Mode Selection */}
             <Text style={styles.subsectionTitle}>Game Mode</Text>
             <View style={styles.modeOptionsContainer}>
               <TouchableOpacity
@@ -219,7 +221,6 @@ export default function PvAiSettingsScreen(): JSX.Element {
               </TouchableOpacity>
             </View>
 
-            {/* Bottom Buttons */}
             <View style={styles.actionButtons}>
               <TouchableOpacity
                 style={styles.backButton}
@@ -256,6 +257,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: height * 0.1,
     paddingHorizontal: 20,
+    zIndex: 1,
   },
   titleContainer: {
     alignItems: "center",
@@ -297,6 +299,7 @@ const styles = StyleSheet.create({
     borderColor: "#f4d5a6",
     padding: 24,
     height: height * 0.5,
+    zIndex: 2,
   },
   settingsContent: {
     flex: 1,
