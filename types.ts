@@ -10,6 +10,7 @@ export type RootStackParamList = {
   PvAiSettings: undefined;
   HowToPlay: undefined;
   PvPTimed: undefined;
+  PvPBestOf3: undefined;
   PvAIScreen: {
     difficulty: Difficulty;
     mode: GameMode;
