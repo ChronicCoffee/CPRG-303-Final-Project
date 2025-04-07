@@ -85,11 +85,11 @@ export default function PvPBestOf3Screen(): JSX.Element {
     let roundResult = '';
 
     if (winner === 'Player 1') {
-      resultText = 'Player 1 Wins!';
+      resultText = '🎉 Player 1 Wins! 🎉';
       roundResult = `Round ${round}: Player 1 won with ${player1Choice} vs ${player2Choice}`;
       newScore.p1 += 1;
     } else if (winner === 'Player 2') {
-      resultText = 'Player 2 Wins!';
+      resultText = '🎉 Player 2 Wins! 🎉';
       roundResult = `Round ${round}: Player 2 won with ${player2Choice} vs ${player1Choice}`;
       newScore.p2 += 1;
     } else {
@@ -156,49 +156,53 @@ export default function PvPBestOf3Screen(): JSX.Element {
       />
 
       {/* Player 2 View (Top - Upside Down) */}
-      <View style={[styles.playerContainer, styles.player2Container]}>
-        <View style={styles.scoreContainer}>
-          <Text style={styles.playerLabel}>Player 2</Text>
-          <Text style={styles.scoreText}>Score: {score.p2}</Text>
-          {currentPlayer === 'p2' && !revealChoices && (
-            <Text style={styles.timerText}>⏱️ {turnTimer}s</Text>
-          )}
-          <Text style={styles.roundText}>Round {round}</Text>
-        </View>
+<View style={[styles.playerContainer, styles.player2Container]}>
+  <View style={styles.scoreContainer}>
+    <Text style={styles.playerLabel}>Player 2</Text>
+    <Text style={styles.scoreText}>Score: {score.p2}</Text>
+    {currentPlayer === 'p2' && !revealChoices && (
+      <Text style={styles.timerText}>⏱️ {turnTimer}s</Text>
+    )}
+    <Text style={styles.roundText}>Round {round}</Text>
+  </View>
 
-        {revealChoices ? (
-          <View style={styles.choiceDisplay}>
+  {revealChoices ? (
+    <View style={styles.choiceDisplay}>
+      <Image
+        source={iconSources[player2Choice as keyof typeof iconSources]}
+        style={styles.choiceImage}
+        resizeMode="contain"
+      />
+      <Text style={styles.choiceText}>{player2Choice}</Text>
+    </View>
+  ) : currentPlayer === 'p2' ? (
+    <View style={styles.choicesContainer}>
+      <Text style={styles.instructionText}>Your turn! Choose!</Text>
+      <View style={styles.choiceButtons}>
+        {choices.map((choice) => (
+          <TouchableOpacity
+            key={choice}
+            onPress={() => handleChoice(choice)}
+            style={styles.choiceButton}
+          >
             <Image
-              source={iconSources[player2Choice as keyof typeof iconSources]}
-              style={styles.choiceImage}
+              source={iconSources[choice]}
+              style={styles.choiceButtonImage}
               resizeMode="contain"
             />
-            <Text style={styles.choiceText}>{player2Choice}</Text>
-          </View>
-        ) : currentPlayer === 'p2' ? (
-          <View style={styles.choicesContainer}>
-            <Text style={styles.instructionText}>Your turn! Choose!</Text>
-            <View style={styles.choiceButtons}>
-              {choices.map((choice) => (
-                <TouchableOpacity
-                  key={choice}
-                  onPress={() => handleChoice(choice)}
-                  style={styles.choiceButton}
-                >
-                  <Image
-                    source={iconSources[choice]}
-                    style={styles.choiceButtonImage}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.choiceLabel}>{choice}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        ) : (
-          <Text style={styles.waitingText}>Waiting for Player 1...</Text>
-        )}
+            <Text style={styles.choiceLabel}>{choice}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
+      {/* Give Up Button moved below choices */}
+      <TouchableOpacity onPress={giveUp} style={styles.giveUpButton}>
+        <Text style={styles.buttonText}>Give Up</Text>
+      </TouchableOpacity>
+    </View>
+  ) : (
+    <Text style={styles.waitingText}>Waiting for Player 1...</Text>
+  )}
+</View>
 
       {/* Player 1 View (Bottom - Right Side Up) */}
       <View style={styles.playerContainer}>
@@ -260,7 +264,17 @@ export default function PvPBestOf3Screen(): JSX.Element {
             <View style={styles.roundResultsContainer}>
               <Text style={styles.resultsHeader}>Round Results:</Text>
               {roundResults.map((result, index) => (
-                <Text key={index} style={styles.roundResultText}>
+                <Text 
+                  key={index} 
+                  style={[
+                    styles.roundResultText,
+                    {
+                      backgroundColor: result.includes('Player 1') ? '#dbeafe' : 
+                                      result.includes('Player 2') ? '#fee2e2' : '#e2e8f0',
+                      color: result.includes('Player 1') ? '#1e40af' : 
+                            result.includes('Player 2') ? '#b91c1c' : '#334155'
+                    }
+                  ]}>
                   {result}
                 </Text>
               ))}
@@ -301,26 +315,45 @@ const styles = StyleSheet.create({
   scoreContainer: {
     alignItems: 'center',
     marginBottom: 20,
+    backgroundColor: '#fff5e6',
+    padding: 15,
+    borderRadius: 15,
+    borderWidth: 3,
+    borderColor: '#f4d5a6',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   playerLabel: {
     fontFamily: 'ByteBounce',
     fontSize: 30,
     color: '#333',
+    textShadowColor: '#fff',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   scoreText: {
     fontFamily: 'ByteBounce',
-    fontSize: 25,
-    color: '#000',
+    fontSize: 35,
+    color: '#2a9d8f',
+    textShadowColor: '#fff',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
   },
   timerText: {
     fontFamily: 'ByteBounce',
-    fontSize: 25,
-    color: '#111',
+    fontSize: 35,
+    color: '#e63946',
+    textShadowColor: '#fff',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 2,
+    marginVertical: 5,
   },
   roundText: {
     fontFamily: 'ByteBounce',
-    fontSize: 20,
-    color: '#000',
+    fontSize: 24,
+    color: '#64748b',
   },
   choiceDisplay: {
     alignItems: 'center',
@@ -383,7 +416,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 2,
     borderColor: '#ff3e3e',
-    marginTop: 20,
+    marginTop: 30,
+    marginBottom: 20,
   },
   gameOverContainer: {
     position: 'absolute',
@@ -407,10 +441,19 @@ const styles = StyleSheet.create({
   },
   gameOverTitle: {
     fontFamily: 'ByteBounce',
-    fontSize: 36,
+    fontSize: 40,
     color: '#000',
     marginBottom: 20,
     textAlign: 'center',
+    padding: 15,
+    borderRadius: 15,
+    backgroundColor: '#ffd700',
+    borderWidth: 4,
+    borderColor: '#ffb703',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   roundResultsContainer: {
     width: '100%',
@@ -422,16 +465,19 @@ const styles = StyleSheet.create({
   },
   resultsHeader: {
     fontFamily: 'ByteBounce',
-    fontSize: 22,
-    color: '#333',
-    marginBottom: 8,
+    fontSize: 26,
+    color: '#000',
+    marginBottom: 12,
+    textDecorationLine: 'underline',
     textAlign: 'center',
   },
   roundResultText: {
     fontFamily: 'ByteBounce',
     fontSize: 18,
-    color: '#000',
     marginVertical: 4,
+    padding: 8,
+    borderRadius: 8,
+    textAlign: 'center',
   },
   finalScoreContainer: {
     marginVertical: 15,
