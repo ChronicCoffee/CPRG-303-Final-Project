@@ -13,10 +13,7 @@ const iconSources = [
 ];
 
 export default function PvPSettingsScreen(): JSX.Element {
-  import type { StackNavigationProp } from '@react-navigation/stack';
-  import type { RootStackParamList } from '../types/navigation';
-  
-    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation();
   const [gameMode, setGameMode] = useState<'Timed' | 'BestOf3'>('Timed');
 
   const pixelArtImages = useMemo(() => {
@@ -176,7 +173,7 @@ const titleStyle = {
   fontFamily: 'ByteBounce',
   fontSize: 100,
   color: '#ff7072',
-  textAlign: "center" as "center", // Explicitly cast to allowed type
+  textAlign: 'center',
   textShadowColor: '#000000aa',
   textShadowOffset: { width: 2, height: 2 },
   textShadowRadius: 2,
@@ -206,5 +203,5 @@ const sectionTitle = {
   textShadowColor: '#00000066',
   textShadowOffset: { width: 2, height: 2 },
   textShadowRadius: 2,
-  textAlign: "center" as "center", // Explicitly cast to allowed type
+  textAlign: 'center',
 };
