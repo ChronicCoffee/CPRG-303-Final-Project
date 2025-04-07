@@ -18,6 +18,7 @@ export default function PvPBestOf3Screen(): JSX.Element {
   const [round, setRound] = useState(1);
   const [player1Choice, setPlayer1Choice] = useState<string | null>(null);
   const [player2Choice, setPlayer2Choice] = useState<string | null>(null);
+  const [currentPlayer, setCurrentPlayer] = useState<'p1' | 'p2'>('p1');
   const [turnTimer, setTurnTimer] = useState(10);
   const [result, setResult] = useState('');
   const [score, setScore] = useState({ p1: 0, p2: 0 });
@@ -36,7 +37,7 @@ export default function PvPBestOf3Screen(): JSX.Element {
   }, [player1Choice, player2Choice]);
 
   useEffect(() => {
-    if (gameOver) return;
+    if (gameOver || revealChoices) return;
 
     roundTimerRef.current = setInterval(() => {
       setTurnTimer((prev) => {
@@ -51,7 +52,7 @@ export default function PvPBestOf3Screen(): JSX.Element {
     return () => {
       if (roundTimerRef.current) clearInterval(roundTimerRef.current);
     };
-  }, [gameOver]);
+  }, [currentPlayer, gameOver, revealChoices]);
 
   const getWinner = (p1: string, p2: string) => {
     if (p1 === p2) return 'Draw';
@@ -65,11 +66,13 @@ export default function PvPBestOf3Screen(): JSX.Element {
 
   const handleTimeout = () => {
     const randomChoice = choices[Math.floor(Math.random() * choices.length)];
-    if (!player1Choice) {
+    if (currentPlayer === 'p1') {
       setPlayer1Choice(randomChoice);
-    } else if (!player2Choice) {
+      setCurrentPlayer('p2');
+    } else {
       setPlayer2Choice(randomChoice);
     }
+    setTurnTimer(10);
   };
 
   const handleRoundEnd = () => {
@@ -102,6 +105,7 @@ export default function PvPBestOf3Screen(): JSX.Element {
       setPlayer1Choice(null);
       setPlayer2Choice(null);
       setRevealChoices(false);
+      setCurrentPlayer('p1');
       setTurnTimer(10);
     }, 2000);
   };
@@ -116,18 +120,21 @@ export default function PvPBestOf3Screen(): JSX.Element {
     setFinalResult(final);
   };
 
-  const handleChoice = (choice: string, player: number) => {
+  const handleChoice = (choice: string) => {
     if (gameOver || revealChoices) return;
-    if (player === 1) {
+    
+    if (currentPlayer === 'p1') {
       setPlayer1Choice(choice);
+      setCurrentPlayer('p2');
     } else {
       setPlayer2Choice(choice);
     }
+    setTurnTimer(10);
   };
 
   const giveUp = () => {
     setGameOver(true);
-    setFinalResult('🚩 Game surrendered!');
+    setFinalResult(currentPlayer === 'p1' ? '🚩 Player 1 surrendered!' : '🚩 Player 2 surrendered!');
   };
 
   const playAgain = () => {
@@ -141,60 +148,14 @@ export default function PvPBestOf3Screen(): JSX.Element {
         style={StyleSheet.absoluteFill}
       />
 
-      {/* Player 1 View (Right Side Up) */}
-      <View style={styles.playerContainer}>
-        <View style={styles.scoreContainer}>
-          <Text style={styles.playerLabel}>Player 1</Text>
-          <Text style={styles.scoreText}>Score: {score.p1}</Text>
-          <Text style={styles.timerText}>⏱️ {turnTimer}s</Text>
-          <Text style={styles.roundText}>Round {round}</Text>
-        </View>
-
-        {revealChoices ? (
-          <View style={styles.choiceDisplay}>
-            <Image
-              source={iconSources[player1Choice as keyof typeof iconSources]}
-              style={styles.choiceImage}
-              resizeMode="contain"
-            />
-            <Text style={styles.choiceText}>{player1Choice}</Text>
-          </View>
-        ) : (
-          <View style={styles.choicesContainer}>
-            <Text style={styles.instructionText}>Make your choice!</Text>
-            <View style={styles.choiceButtons}>
-              {choices.map((choice) => (
-                <TouchableOpacity
-                  key={choice}
-                  onPress={() => handleChoice(choice, 1)}
-                  disabled={!!player1Choice}
-                  style={[styles.choiceButton, player1Choice && styles.disabledButton]}
-                >
-                  <Image
-                    source={iconSources[choice]}
-                    style={styles.choiceButtonImage}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.choiceLabel}>{choice}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        )}
-
-        {!gameOver && !revealChoices && (
-          <TouchableOpacity onPress={giveUp} style={styles.giveUpButton}>
-            <Text style={styles.buttonText}>Give Up</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Player 2 View (Upside Down) */}
-      <View style={[styles.playerContainer, styles.upsideDown]}>
+      {/* Player 2 View (Top - Upside Down) */}
+      <View style={[styles.playerContainer, styles.player2Container]}>
         <View style={styles.scoreContainer}>
           <Text style={styles.playerLabel}>Player 2</Text>
           <Text style={styles.scoreText}>Score: {score.p2}</Text>
-          <Text style={styles.timerText}>⏱️ {turnTimer}s</Text>
+          {currentPlayer === 'p2' && !revealChoices && (
+            <Text style={styles.timerText}>⏱️ {turnTimer}s</Text>
+          )}
           <Text style={styles.roundText}>Round {round}</Text>
         </View>
 
@@ -207,16 +168,15 @@ export default function PvPBestOf3Screen(): JSX.Element {
             />
             <Text style={styles.choiceText}>{player2Choice}</Text>
           </View>
-        ) : (
+        ) : currentPlayer === 'p2' ? (
           <View style={styles.choicesContainer}>
-            <Text style={styles.instructionText}>Make your choice!</Text>
+            <Text style={styles.instructionText}>Your turn! Choose!</Text>
             <View style={styles.choiceButtons}>
               {choices.map((choice) => (
                 <TouchableOpacity
                   key={choice}
-                  onPress={() => handleChoice(choice, 2)}
-                  disabled={!!player2Choice}
-                  style={[styles.choiceButton, player2Choice && styles.disabledButton]}
+                  onPress={() => handleChoice(choice)}
+                  style={styles.choiceButton}
                 >
                   <Image
                     source={iconSources[choice]}
@@ -228,9 +188,56 @@ export default function PvPBestOf3Screen(): JSX.Element {
               ))}
             </View>
           </View>
+        ) : (
+          <Text style={styles.waitingText}>Waiting for Player 1...</Text>
+        )}
+      </View>
+
+      {/* Player 1 View (Bottom - Right Side Up) */}
+      <View style={styles.playerContainer}>
+        <View style={styles.scoreContainer}>
+          <Text style={styles.playerLabel}>Player 1</Text>
+          <Text style={styles.scoreText}>Score: {score.p1}</Text>
+          {currentPlayer === 'p1' && !revealChoices && (
+            <Text style={styles.timerText}>⏱️ {turnTimer}s</Text>
+          )}
+          <Text style={styles.roundText}>Round {round}</Text>
+        </View>
+
+        {revealChoices ? (
+          <View style={styles.choiceDisplay}>
+            <Image
+              source={iconSources[player1Choice as keyof typeof iconSources]}
+              style={styles.choiceImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.choiceText}>{player1Choice}</Text>
+          </View>
+        ) : currentPlayer === 'p1' ? (
+          <View style={styles.choicesContainer}>
+            <Text style={styles.instructionText}>Your turn! Choose!</Text>
+            <View style={styles.choiceButtons}>
+              {choices.map((choice) => (
+                <TouchableOpacity
+                  key={choice}
+                  onPress={() => handleChoice(choice)}
+                  style={styles.choiceButton}
+                >
+                  <Image
+                    source={iconSources[choice]}
+                    style={styles.choiceButtonImage}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.choiceLabel}>{choice}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        ) : (
+          <Text style={styles.waitingText}>Waiting for Player 2...</Text>
         )}
 
-        {!gameOver && !revealChoices && (
+        {!gameOver && !revealChoices && currentPlayer === 'p1' && (
           <TouchableOpacity onPress={giveUp} style={styles.giveUpButton}>
             <Text style={styles.buttonText}>Give Up</Text>
           </TouchableOpacity>
@@ -262,7 +269,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  upsideDown: {
+  player2Container: {
     transform: [{ rotate: '180deg' }],
   },
   scoreContainer: {
@@ -316,6 +323,13 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
   },
+  waitingText: {
+    fontFamily: 'ByteBounce',
+    fontSize: 25,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 50,
+  },
   choiceButtons: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -325,9 +339,6 @@ const styles = StyleSheet.create({
   choiceButton: {
     alignItems: 'center',
     margin: 10,
-  },
-  disabledButton: {
-    opacity: 0.5,
   },
   choiceButtonImage: {
     width: 100,
