@@ -25,6 +25,7 @@ export default function PvPBestOf3Screen(): JSX.Element {
   const [gameOver, setGameOver] = useState(false);
   const [finalResult, setFinalResult] = useState('');
   const [revealChoices, setRevealChoices] = useState(false);
+  const [roundResults, setRoundResults] = useState<string[]>([]);
   const roundTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -81,17 +82,23 @@ export default function PvPBestOf3Screen(): JSX.Element {
     const winner = getWinner(player1Choice, player2Choice);
     let resultText = 'Draw!';
     const newScore = { ...score };
+    let roundResult = '';
 
     if (winner === 'Player 1') {
       resultText = 'Player 1 Wins!';
+      roundResult = `Round ${round}: Player 1 won with ${player1Choice} vs ${player2Choice}`;
       newScore.p1 += 1;
     } else if (winner === 'Player 2') {
       resultText = 'Player 2 Wins!';
+      roundResult = `Round ${round}: Player 2 won with ${player2Choice} vs ${player1Choice}`;
       newScore.p2 += 1;
+    } else {
+      roundResult = `Round ${round}: Draw (${player1Choice} vs ${player2Choice})`;
     }
 
     setScore(newScore);
     setResult(resultText);
+    setRoundResults(prev => [...prev, roundResult]);
 
     setTimeout(() => {
       if (newScore.p1 >= 2 || newScore.p2 >= 2) {
@@ -244,12 +251,31 @@ export default function PvPBestOf3Screen(): JSX.Element {
         )}
       </View>
 
-      {/* Game Over Modal */}
+      {/* Enhanced Game Over Modal */}
       {gameOver && (
         <View style={styles.gameOverContainer}>
           <View style={styles.gameOverBox}>
-            <Text style={styles.gameOverText}>{finalResult}</Text>
-            <TouchableOpacity onPress={playAgain} style={styles.playAgainButton}>
+            <Text style={styles.gameOverTitle}>{finalResult}</Text>
+            
+            <View style={styles.roundResultsContainer}>
+              <Text style={styles.resultsHeader}>Round Results:</Text>
+              {roundResults.map((result, index) => (
+                <Text key={index} style={styles.roundResultText}>
+                  {result}
+                </Text>
+              ))}
+            </View>
+            
+            <View style={styles.finalScoreContainer}>
+              <Text style={styles.finalScoreText}>
+                Final Score: {score.p1} - {score.p2}
+              </Text>
+            </View>
+            
+            <TouchableOpacity 
+              onPress={playAgain} 
+              style={styles.playAgainButton}
+            >
               <Text style={styles.buttonText}>Play Again</Text>
             </TouchableOpacity>
           </View>
@@ -376,12 +402,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 4,
     borderColor: '#f4d5a6',
+    width: '90%',
+    maxWidth: 400,
   },
-  gameOverText: {
+  gameOverTitle: {
     fontFamily: 'ByteBounce',
-    fontSize: 30,
+    fontSize: 36,
     color: '#000',
     marginBottom: 20,
+    textAlign: 'center',
+  },
+  roundResultsContainer: {
+    width: '100%',
+    marginVertical: 15,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    maxHeight: 200,
+  },
+  resultsHeader: {
+    fontFamily: 'ByteBounce',
+    fontSize: 22,
+    color: '#333',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  roundResultText: {
+    fontFamily: 'ByteBounce',
+    fontSize: 18,
+    color: '#000',
+    marginVertical: 4,
+  },
+  finalScoreContainer: {
+    marginVertical: 15,
+  },
+  finalScoreText: {
+    fontFamily: 'ByteBounce',
+    fontSize: 28,
+    color: '#000',
     textAlign: 'center',
   },
   playAgainButton: {
@@ -391,6 +449,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 2,
     borderColor: '#2b8a3e',
+    marginTop: 10,
   },
   buttonText: {
     fontFamily: 'ByteBounce',
