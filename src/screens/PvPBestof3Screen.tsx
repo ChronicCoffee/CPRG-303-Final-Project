@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions, Animated, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Dimensions, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const iconSources = {
   Rock: require('../../assets/pixelRockGame.png'),
@@ -18,26 +18,25 @@ export default function PvPBestOf3Screen(): JSX.Element {
   const [round, setRound] = useState(1);
   const [player1Choice, setPlayer1Choice] = useState<string | null>(null);
   const [player2Choice, setPlayer2Choice] = useState<string | null>(null);
-  const [isPlayer1Turn, setIsPlayer1Turn] = useState(true);
   const [turnTimer, setTurnTimer] = useState(10);
-  const [sequenceRunning, setSequenceRunning] = useState(false);
-  const [currentFrame, setCurrentFrame] = useState(0);
-  const [animationScale] = useState(new Animated.Value(1));
-  const [label, setLabel] = useState(choices[0]);
   const [result, setResult] = useState('');
   const [score, setScore] = useState({ p1: 0, p2: 0 });
   const [gameOver, setGameOver] = useState(false);
   const [finalResult, setFinalResult] = useState('');
+  const [revealChoices, setRevealChoices] = useState(false);
   const roundTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (player1Choice && player2Choice) {
-      startSequence();
+      setRevealChoices(true);
+      setTimeout(() => {
+        handleRoundEnd();
+      }, 2000);
     }
   }, [player1Choice, player2Choice]);
 
   useEffect(() => {
-    if (sequenceRunning || gameOver) return;
+    if (gameOver) return;
 
     roundTimerRef.current = setInterval(() => {
       setTurnTimer((prev) => {
@@ -52,7 +51,7 @@ export default function PvPBestOf3Screen(): JSX.Element {
     return () => {
       if (roundTimerRef.current) clearInterval(roundTimerRef.current);
     };
-  }, [sequenceRunning, isPlayer1Turn, gameOver]);
+  }, [gameOver]);
 
   const getWinner = (p1: string, p2: string) => {
     if (p1 === p2) return 'Draw';
@@ -66,20 +65,11 @@ export default function PvPBestOf3Screen(): JSX.Element {
 
   const handleTimeout = () => {
     const randomChoice = choices[Math.floor(Math.random() * choices.length)];
-    if (isPlayer1Turn) {
+    if (!player1Choice) {
       setPlayer1Choice(randomChoice);
-      setIsPlayer1Turn(false);
-    } else {
+    } else if (!player2Choice) {
       setPlayer2Choice(randomChoice);
     }
-  };
-
-  const startSequence = () => {
-    setSequenceRunning(true);
-    setTimeout(() => {
-      handleRoundEnd();
-      setSequenceRunning(false);
-    }, 2000);
   };
 
   const handleRoundEnd = () => {
@@ -111,7 +101,7 @@ export default function PvPBestOf3Screen(): JSX.Element {
       setResult('');
       setPlayer1Choice(null);
       setPlayer2Choice(null);
-      setIsPlayer1Turn(true);
+      setRevealChoices(false);
       setTurnTimer(10);
     }, 2000);
   };
@@ -126,11 +116,10 @@ export default function PvPBestOf3Screen(): JSX.Element {
     setFinalResult(final);
   };
 
-  const handleChoice = (choice: string) => {
-    if (sequenceRunning || gameOver) return;
-    if (isPlayer1Turn) {
+  const handleChoice = (choice: string, player: number) => {
+    if (gameOver || revealChoices) return;
+    if (player === 1) {
       setPlayer1Choice(choice);
-      setIsPlayer1Turn(false);
     } else {
       setPlayer2Choice(choice);
     }
@@ -138,15 +127,12 @@ export default function PvPBestOf3Screen(): JSX.Element {
 
   const giveUp = () => {
     setGameOver(true);
-    setFinalResult(isPlayer1Turn ? '🚩 Player 1 surrendered!' : '🚩 Player 2 surrendered!');
+    setFinalResult('🚩 Game surrendered!');
   };
 
   const playAgain = () => {
     navigation.goBack();
   };
-
-  const currentChoice = choices[currentFrame];
-  const icon = iconSources[currentChoice];
 
   return (
     <View style={styles.container}>
@@ -155,140 +141,113 @@ export default function PvPBestOf3Screen(): JSX.Element {
         style={StyleSheet.absoluteFill}
       />
 
-      <View style={styles.contentContainer}>
-        <Text style={styles.title}>CLASH</Text>
-        <Text style={styles.subtitle}>OF</Text>
-        <Text style={styles.footerTitle}>HANDS</Text>
-
-        {/* Scoreboard */}
-        <View style={styles.scoreboard}>
-          <View style={styles.scoreColumn}>
-            <Text style={styles.playerLabel}>
-              {isPlayer1Turn ? '▶️ Player 1' : 'Player 1'}
-            </Text>
-            <Text style={styles.scoreText}>Score: {score.p1}</Text>
-          </View>
-          <View style={styles.scoreColumn}>
-            <Text style={styles.roundLabel}>🕹️ Round {round}</Text>
-            <Text style={styles.timerText}>⏱️ {turnTimer}s</Text>
-          </View>
-          <View style={styles.scoreColumn}>
-            <Text style={styles.playerLabel}>
-              {!isPlayer1Turn ? '▶️ Player 2' : 'Player 2'}
-            </Text>
-            <Text style={styles.scoreText}>Score: {score.p2}</Text>
-          </View>
+      {/* Player 1 View (Right Side Up) */}
+      <View style={styles.playerContainer}>
+        <View style={styles.scoreContainer}>
+          <Text style={styles.playerLabel}>Player 1</Text>
+          <Text style={styles.scoreText}>Score: {score.p1}</Text>
+          <Text style={styles.timerText}>⏱️ {turnTimer}s</Text>
+          <Text style={styles.roundText}>Round {round}</Text>
         </View>
 
-        {/* Game Info */}
-        {!sequenceRunning && !gameOver && !!result && (
-          <Text style={[styles.infoText, {
-            color: result.includes('Player 1') ? '#2563eb' : 
-                  result.includes('Player 2') ? '#ef4444' : '#000'
-          }]}>
-            {result}
-          </Text>
-        )}
-        {!sequenceRunning && !gameOver && !result && (
-          <Text style={styles.infoText}>
-            {isPlayer1Turn
-              ? `Player 1's Turn (${turnTimer}s)`
-              : `Player 2's Turn (${turnTimer}s)`}
-          </Text>
-        )}
-        {!!gameOver && (
-          <Text style={[styles.infoText, { marginTop: 10 }]}>
-            {finalResult}
-          </Text>
-        )}
-
-        {/* Game UI */}
-        {sequenceRunning ? (
-          <View style={styles.sequenceContainer}>
-            <Animated.Image
-              source={icon}
-              style={[
-                styles.sequenceImage,
-                { transform: [{ scale: animationScale }] },
-              ]}
+        {revealChoices ? (
+          <View style={styles.choiceDisplay}>
+            <Image
+              source={iconSources[player1Choice as keyof typeof iconSources]}
+              style={styles.choiceImage}
               resizeMode="contain"
             />
-            <Text style={styles.labelText}>{label}</Text>
+            <Text style={styles.choiceText}>{player1Choice}</Text>
           </View>
         ) : (
           <View style={styles.choicesContainer}>
-            <View style={styles.playerContainer}>
-              {player1Choice ? (
-                <>
+            <Text style={styles.instructionText}>Make your choice!</Text>
+            <View style={styles.choiceButtons}>
+              {choices.map((choice) => (
+                <TouchableOpacity
+                  key={choice}
+                  onPress={() => handleChoice(choice, 1)}
+                  disabled={!!player1Choice}
+                  style={[styles.choiceButton, player1Choice && styles.disabledButton]}
+                >
                   <Image
-                    source={iconSources[player1Choice as keyof typeof iconSources]}
-                    style={styles.choiceImage}
+                    source={iconSources[choice]}
+                    style={styles.choiceButtonImage}
                     resizeMode="contain"
                   />
-                  <Text style={styles.labelText}>{player1Choice}</Text>
-                </>
-              ) : (
-                <Text style={styles.waitingText}>Waiting...</Text>
-              )}
-            </View>
-
-            <View style={styles.vsContainer}>
-              <Text style={styles.vsText}>VS</Text>
-            </View>
-
-            <View style={styles.playerContainer}>
-              {player2Choice ? (
-                <>
-                  <Image
-                    source={iconSources[player2Choice as keyof typeof iconSources]}
-                    style={styles.choiceImage}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.labelText}>{player2Choice}</Text>
-                </>
-              ) : (
-                <Text style={styles.waitingText}>Waiting...</Text>
-              )}
+                  <Text style={styles.choiceLabel}>{choice}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
         )}
 
-        {/* Choice Buttons */}
-        {!player1Choice && !player2Choice && !sequenceRunning && !gameOver && (
-          <View style={styles.choiceButtonsContainer}>
-            {choices.map((choice) => (
-              <TouchableOpacity
-                key={choice}
-                onPress={() => handleChoice(choice)}
-                style={styles.choiceButton}
-              >
-                <Image
-                  source={iconSources[choice]}
-                  style={[
-                    styles.choiceButtonImage,
-                    { opacity: isPlayer1Turn ? 1 : 0.6 }
-                  ]}
-                  resizeMode="contain"
-                />
-                <Text style={styles.labelText}>{choice}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-
-        {/* Action Buttons */}
-        {!gameOver && !sequenceRunning && (
+        {!gameOver && !revealChoices && (
           <TouchableOpacity onPress={giveUp} style={styles.giveUpButton}>
             <Text style={styles.buttonText}>Give Up</Text>
           </TouchableOpacity>
         )}
+      </View>
 
-        {gameOver && (
-          <TouchableOpacity onPress={playAgain} style={styles.playAgainButton}>
-            <Text style={styles.buttonText}>Play Again</Text>
+      {/* Player 2 View (Upside Down) */}
+      <View style={[styles.playerContainer, styles.upsideDown]}>
+        <View style={styles.scoreContainer}>
+          <Text style={styles.playerLabel}>Player 2</Text>
+          <Text style={styles.scoreText}>Score: {score.p2}</Text>
+          <Text style={styles.timerText}>⏱️ {turnTimer}s</Text>
+          <Text style={styles.roundText}>Round {round}</Text>
+        </View>
+
+        {revealChoices ? (
+          <View style={styles.choiceDisplay}>
+            <Image
+              source={iconSources[player2Choice as keyof typeof iconSources]}
+              style={styles.choiceImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.choiceText}>{player2Choice}</Text>
+          </View>
+        ) : (
+          <View style={styles.choicesContainer}>
+            <Text style={styles.instructionText}>Make your choice!</Text>
+            <View style={styles.choiceButtons}>
+              {choices.map((choice) => (
+                <TouchableOpacity
+                  key={choice}
+                  onPress={() => handleChoice(choice, 2)}
+                  disabled={!!player2Choice}
+                  style={[styles.choiceButton, player2Choice && styles.disabledButton]}
+                >
+                  <Image
+                    source={iconSources[choice]}
+                    style={styles.choiceButtonImage}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.choiceLabel}>{choice}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {!gameOver && !revealChoices && (
+          <TouchableOpacity onPress={giveUp} style={styles.giveUpButton}>
+            <Text style={styles.buttonText}>Give Up</Text>
           </TouchableOpacity>
         )}
       </View>
+
+      {/* Game Over Modal */}
+      {gameOver && (
+        <View style={styles.gameOverContainer}>
+          <View style={styles.gameOverBox}>
+            <Text style={styles.gameOverText}>{finalResult}</Text>
+            <TouchableOpacity onPress={playAgain} style={styles.playAgainButton}>
+              <Text style={styles.buttonText}>Play Again</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -297,164 +256,134 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  contentContainer: {
+  playerContainer: {
     flex: 1,
-    alignItems: "center",
-    paddingTop: 80,
-    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
   },
-  title: {
-    fontFamily: "ByteBounce",
-    fontSize: 100,
-    color: "#ff7072",
-    textAlign: "center",
-    textShadowColor: "#000000aa",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 2,
+  upsideDown: {
+    transform: [{ rotate: '180deg' }],
   },
-  subtitle: {
-    fontFamily: "ByteBounce",
-    fontSize: 50,
-    color: "#000",
-    textAlign: "center",
-    textShadowColor: "#000000aa",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1,
-  },
-  footerTitle: {
-    fontFamily: "ByteBounce",
-    fontSize: 100,
-    color: "#e5aa7a",
-    textAlign: "center",
-    textShadowColor: "#000000aa",
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 2,
-  },
-  scoreboard: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginTop: 20,
+  scoreContainer: {
+    alignItems: 'center',
     marginBottom: 20,
-    padding: 15,
-    backgroundColor: "#fdf5e6",
-    borderColor: "#f4d5a6",
-    borderWidth: 4,
-    borderRadius: 16,
-    maxWidth: 380,
-  },
-  scoreColumn: {
-    alignItems: "center",
   },
   playerLabel: {
-    fontFamily: "ByteBounce",
-    fontSize: 25,
-    color: "#333",
+    fontFamily: 'ByteBounce',
+    fontSize: 30,
+    color: '#333',
   },
   scoreText: {
-    fontFamily: "ByteBounce",
-    fontSize: 22,
-    color: "#000",
-  },
-  roundLabel: {
-    fontFamily: "ByteBounce",
-    fontSize: 23,
-    color: "#000",
+    fontFamily: 'ByteBounce',
+    fontSize: 25,
+    color: '#000',
   },
   timerText: {
-    fontFamily: "ByteBounce",
-    fontSize: 31,
-    color: "#111",
-    textShadowColor: "#fff",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 1,
+    fontFamily: 'ByteBounce',
+    fontSize: 25,
+    color: '#111',
   },
-  infoText: {
-    fontFamily: "ByteBounce",
-    fontSize: 38,
-    marginTop: 8,
-    textAlign: "center",
+  roundText: {
+    fontFamily: 'ByteBounce',
+    fontSize: 20,
+    color: '#000',
   },
-  sequenceContainer: {
-    alignItems: "center",
-    marginTop: 40,
-  },
-  sequenceImage: {
-    width: 180,
-    height: 180,
-  },
-  choicesContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginTop: 40,
-  },
-  playerContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "40%",
-  },
-  vsContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "20%",
-  },
-  vsText: {
-    fontFamily: "ByteBounce",
-    fontSize: 40,
-    color: "#000",
-  },
-  waitingText: {
-    fontFamily: "ByteBounce",
-    fontSize: 24,
-    color: "#666",
+  choiceDisplay: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
   choiceImage: {
-    width: 120,
-    height: 120,
+    width: 150,
+    height: 150,
+    marginBottom: 20,
   },
-  choiceButtonsContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "100%",
-    marginTop: 30,
-    gap: 20,
+  choiceText: {
+    fontFamily: 'ByteBounce',
+    fontSize: 30,
+    color: '#000',
+  },
+  choicesContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  instructionText: {
+    fontFamily: 'ByteBounce',
+    fontSize: 30,
+    marginBottom: 30,
+    color: '#000',
+    textAlign: 'center',
+  },
+  choiceButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    width: '100%',
   },
   choiceButton: {
-    alignItems: "center",
+    alignItems: 'center',
+    margin: 10,
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
   choiceButtonImage: {
     width: 100,
     height: 100,
   },
-  labelText: {
-    fontFamily: "ByteBounce",
-    fontSize: 25,
-    marginTop: 10,
-    color: "#000",
-    textAlign: "center",
+  choiceLabel: {
+    fontFamily: 'ByteBounce',
+    fontSize: 20,
+    color: '#000',
+    marginTop: 5,
   },
   giveUpButton: {
-    backgroundColor: "#ff6b6b",
-    marginTop: 40,
+    backgroundColor: '#ff6b6b',
     paddingHorizontal: 30,
     paddingVertical: 15,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#ff3e3e",
+    borderColor: '#ff3e3e',
+    marginTop: 20,
+  },
+  gameOverContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.7)',
+  },
+  gameOverBox: {
+    backgroundColor: '#fdf5e6',
+    padding: 30,
+    borderRadius: 20,
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#f4d5a6',
+  },
+  gameOverText: {
+    fontFamily: 'ByteBounce',
+    fontSize: 30,
+    color: '#000',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   playAgainButton: {
-    backgroundColor: "#51cf66",
-    marginTop: 40,
+    backgroundColor: '#51cf66',
     paddingHorizontal: 30,
     paddingVertical: 15,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#2b8a3e",
+    borderColor: '#2b8a3e',
   },
   buttonText: {
-    fontFamily: "ByteBounce",
+    fontFamily: 'ByteBounce',
     fontSize: 25,
-    color: "#000",
+    color: '#000',
   },
 });
