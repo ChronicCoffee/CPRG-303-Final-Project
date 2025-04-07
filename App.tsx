@@ -10,10 +10,11 @@ import PvPSettingsScreen from "./src/screens/PvPSettingsScreen";
 import PvAiSettingsScreen from "./src/screens/PvAiSettingsScreen";
 import HowToPlayScreen from "./src/screens/HowtoPlayScreen";
 import PvPTimedScreen from "./src/screens/PvPTimedScreen";
+import PvPBestOf3Screen from "./src/screens/PvPBestof3Screen";
 import PvAIScreen from "./src/screens/PvAIScreen";
 import { RootStackParamList } from "./types";
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -38,6 +39,7 @@ export default function App() {
         <Stack.Screen name="PvAiSettings" component={PvAiSettingsScreen} />
         <Stack.Screen name="HowToPlay" component={HowToPlayScreen} />
         <Stack.Screen name="PvPTimed" component={PvPTimedScreen} />
+        <Stack.Screen name="PvPBestOf3" component={PvPBestOf3Screen} />
         <Stack.Screen name="PvAIScreen" component={PvAIScreen} />
       </Stack.Navigator>
     </NavigationContainer>
