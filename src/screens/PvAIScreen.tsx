@@ -41,23 +41,19 @@ export default function PvAIScreen() {
   const [finalResult, setFinalResult] = useState("");
   const [turnTimer, setTurnTimer] = useState(10);
   const choices: Choice[] = ["Rock", "Paper", "Scissors"];
+  const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // AI decision making based on difficulty
   const makeAiChoice = (): Choice => {
     if (difficulty === "Easy") {
-      // Pure random for easy
       return choices[Math.floor(Math.random() * 3)];
     } else if (difficulty === "Medium") {
-      // Slightly smarter - avoids repeating same choice
       if (aiChoice && Math.random() > 0.3) {
         const otherChoices = choices.filter((c) => c !== aiChoice);
         return otherChoices[Math.floor(Math.random() * 2)];
       }
       return choices[Math.floor(Math.random() * 3)];
     } else {
-      // Hard - tries to predict player patterns
       if (playerChoice && Math.random() > 0.6) {
-        // Counter the player's last choice
         if (playerChoice === "Rock") return "Paper";
         if (playerChoice === "Paper") return "Scissors";
         return "Rock";
@@ -74,13 +70,11 @@ export default function PvAIScreen() {
     }
   }, [playerChoice]);
 
-  // Add turnTimer effect for countdown
   useEffect(() => {
     if (!sequenceRunning && !gameOver && !playerChoice && turnTimer > 0) {
       const timer = setInterval(() => {
         setTurnTimer((prev) => {
           if (prev <= 1) {
-            // Auto-select a random choice when timer runs out
             handleChoice(choices[Math.floor(Math.random() * 3)]);
             return 0;
           }
@@ -93,43 +87,8 @@ export default function PvAIScreen() {
   }, [sequenceRunning, gameOver, playerChoice, turnTimer]);
 
   useEffect(() => {
-    if (sequenceRunning) {
-      const interval = setInterval(() => {
-        setCurrentFrame((prev) => {
-          const next = (prev + 1) % choices.length;
-          setLabel(choices[next]);
-          return next;
-        });
-
-        Animated.sequence([
-          Animated.timing(animationScale, {
-            toValue: 1.2,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-          Animated.timing(animationScale, {
-            toValue: 1,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-        ]).start();
-      }, 300);
-
-      const timeout = setTimeout(() => {
-        clearInterval(interval);
-        handleRoundEnd();
-      }, 2000);
-
-      return () => {
-        clearInterval(interval);
-        clearTimeout(timeout);
-      };
-    }
-  }, [sequenceRunning]);
-
-  useEffect(() => {
     if (mode === "Timed" && !sequenceRunning && !gameOver) {
-      const timer = setInterval(() => {
+      gameTimerRef.current = setInterval(() => {
         setGameTimer((prev) => {
           if (prev <= 1) {
             setGameOver(true);
@@ -140,7 +99,9 @@ export default function PvAIScreen() {
         });
       }, 1000);
 
-      return () => clearInterval(timer);
+      return () => {
+        if (gameTimerRef.current) clearInterval(gameTimerRef.current);
+      };
     }
   }, [sequenceRunning, gameOver]);
 
@@ -158,6 +119,10 @@ export default function PvAIScreen() {
 
   const startSequence = () => {
     setSequenceRunning(true);
+    setTimeout(() => {
+      handleRoundEnd();
+      setSequenceRunning(false);
+    }, 2000);
   };
 
   const handleRoundEnd = () => {
@@ -177,7 +142,6 @@ export default function PvAIScreen() {
 
     setScore(newScore);
     setResult(resultText);
-    setSequenceRunning(false);
 
     setTimeout(() => {
       if (mode === "BestOf3" && (newScore.player >= 2 || newScore.ai >= 2)) {
@@ -190,7 +154,7 @@ export default function PvAIScreen() {
       setResult("");
       setPlayerChoice(null);
       setAiChoice(null);
-      setTurnTimer(10); // Reset turn timer for next round
+      setTurnTimer(10);
     }, 2000);
   };
 
@@ -253,7 +217,12 @@ export default function PvAIScreen() {
 
         {/* Game Info */}
         {!sequenceRunning && !gameOver && !!result && (
-          <Text style={styles.infoText}>{result}</Text>
+          <Text style={[styles.infoText, {
+            color: result.includes('You') ? '#2563eb' : 
+                  result.includes('AI') ? '#ef4444' : '#000'
+          }]}>
+            {result}
+          </Text>
         )}
         {!sequenceRunning && !gameOver && !result && (
           <Text style={styles.infoText}>
@@ -281,18 +250,54 @@ export default function PvAIScreen() {
           </View>
         ) : (
           <View style={styles.choicesContainer}>
+            <View style={styles.playerContainer}>
+              {playerChoice ? (
+                <>
+                  <Image
+                    source={iconSources[playerChoice]}
+                    style={styles.choiceImage}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.labelText}>{playerChoice}</Text>
+                </>
+              ) : (
+                <Text style={styles.waitingText}>Your Choice</Text>
+              )}
+            </View>
+
+            <View style={styles.vsContainer}>
+              <Text style={styles.vsText}>VS</Text>
+            </View>
+
+            <View style={styles.playerContainer}>
+              {aiChoice ? (
+                <>
+                  <Image
+                    source={iconSources[aiChoice]}
+                    style={styles.choiceImage}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.labelText}>{aiChoice}</Text>
+                </>
+              ) : (
+                <Text style={styles.waitingText}>AI Choice</Text>
+              )}
+            </View>
+          </View>
+        )}
+
+        {/* Choice Buttons */}
+        {!playerChoice && !sequenceRunning && !gameOver && (
+          <View style={styles.choiceButtonsContainer}>
             {choices.map((choice) => (
               <TouchableOpacity
                 key={choice}
                 onPress={() => handleChoice(choice)}
-                disabled={!!playerChoice || gameOver}
+                style={styles.choiceButton}
               >
                 <Image
                   source={iconSources[choice]}
-                  style={[
-                    styles.choiceImage,
-                    playerChoice && playerChoice !== choice && { opacity: 0.5 },
-                  ]}
+                  style={styles.choiceButtonImage}
                   resizeMode="contain"
                 />
                 <Text style={styles.labelText}>{choice}</Text>
@@ -397,7 +402,6 @@ const styles = StyleSheet.create({
   infoText: {
     fontFamily: "ByteBounce",
     fontSize: 38,
-    color: "#000",
     marginTop: 8,
     textAlign: "center",
   },
@@ -415,9 +419,43 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 40,
   },
+  playerContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "40%",
+  },
+  vsContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "20%",
+  },
+  vsText: {
+    fontFamily: "ByteBounce",
+    fontSize: 40,
+    color: "#000",
+  },
+  waitingText: {
+    fontFamily: "ByteBounce",
+    fontSize: 24,
+    color: "#666",
+  },
   choiceImage: {
     width: 120,
     height: 120,
+  },
+  choiceButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "100%",
+    marginTop: 30,
+    gap: 20,
+  },
+  choiceButton: {
+    alignItems: "center",
+  },
+  choiceButtonImage: {
+    width: 100,
+    height: 100,
   },
   labelText: {
     fontFamily: "ByteBounce",

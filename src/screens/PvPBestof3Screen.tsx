@@ -221,7 +221,7 @@ export default function PvPBestOf3Screen(): JSX.Element {
               {player1Choice ? (
                 <>
                   <Image
-                    source={iconSources[player1Choice]}
+                    source={iconSources[player1Choice as keyof typeof iconSources]}
                     style={styles.choiceImage}
                     resizeMode="contain"
                   />
@@ -240,7 +240,7 @@ export default function PvPBestOf3Screen(): JSX.Element {
               {player2Choice ? (
                 <>
                   <Image
-                    source={iconSources[player2Choice]}
+                    source={iconSources[player2Choice as keyof typeof iconSources]}
                     style={styles.choiceImage}
                     resizeMode="contain"
                   />
